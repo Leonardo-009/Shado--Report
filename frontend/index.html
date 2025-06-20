@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Report </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="dark-theme">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i> Shadow Report
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="./index.html" class="nav-link active" data-screen="home-screen">Gerar Relatório</a></li>
+            <li><a href="./IP/analyze-ips.html" class="nav-link">Análise de IPs</a></li>
+        </ul>
+    </nav>
+
+    <div class="screen active-screen" id="home-screen">
+        <div class="screen-container">
+            <!-- Painel Esquerdo: ShadowDef Relatórios de Segurança -->
+            <div class="left-panel">
+                <div class="container">
+                    <h1>Shadow Relatórios</h1>
+                    <div class="status status-waiting" id="status">
+                        <i class="fas fa-clock"></i> AGUARDANDO ENTRADA...
+                    </div>
+
+                    <div class="section-title">
+                        <i class="fas fa-file-alt"></i>
+                        <h2>Conteúdo do Log</h2>
+                    </div>
+                    <textarea id="log" placeholder="Cole o conteúdo do log aqui"></textarea>
+
+                    <div class="section-title">
+                        <i class="fas fa-crosshairs"></i>
+                        <h2>Indicadores de Compromisso (IOCs)</h2>
+                    </div>
+                    <div class="ioc-input-group">
+                        <input type="text" id="main-ioc-field" placeholder="Adicionar IP, Hash, Domínio...">
+                        <button class="add-ioc-button button button-primary" onclick="addIocFromMainField()">
+                            <i class="fas fa-plus"></i> Adicionar IOC
+                        </button>
+                    </div>
+                    <div id="ioc-list" class="ioc-list"></div>
+
+                    <div class="section-title">
+                        <i class="fas fa-tags"></i>
+                        <h2>Tipo de Relatório</h2>
+                    </div>
+                    <div id="reportTypeContainer" class="category-selection">
+                        <div class="report-type-option" id="option-base">
+                            <input type="radio" id="base-report" name="report-type" value="base">
+                            <label for="base-report">
+                                <i class="fas fa-file-alt"></i>
+                                Relatório
+                            </label>
+                        </div>
+                        <div class="report-type-option" id="option-refine">
+                            <input type="radio" id="refine-rule" name="report-type" value="refine">
+                            <label for="refine-rule">
+                                <i class="fas fa-tools"></i>
+                                Refino de Regra
+                            </label>
+                        </div>
+                        <div class="report-type-option" id="option-siem">
+                            <input type="radio" id="siem-health" name="report-type" value="siem-health">
+                            <label for="siem-health">
+                                <i class="fas fa-heartbeat"></i>
+                                Saúde do SIEM
+                            </label>
+                        </div>
+                        <p id="reportTypeError" style="display: none;">Selecione um tipo de relatório.</p>
+                    </div>
+
+                    <button class="generate-button button button-primary" onclick="gerarRelatorio()">Gerar
+                        Relatório</button>
+                </div>
+            </div>
+
+            <!-- Painel Direito: Relatório Gerado -->
+            <div class="right-panel">
+                <div class="container">
+                    <div class="section-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h2>Relatório Gerado</h2>
+                    </div>
+                    <div class="report-output-container">
+                        <div id="reportOutput" class="report-output">Seu relatório será exibido aqui.</div>
+                        <!-- Remova o report-container adicional -->
+                        <button class="copy-button button button-primary" onclick="copyReport()"
+                            title="Copiar Relatório">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">×</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
