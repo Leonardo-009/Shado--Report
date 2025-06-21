@@ -310,34 +310,34 @@ app.post('/api/report', async (req, res) => {
         else if (hour >= 18) saudacao = 'boa noite';
 
         const relatorioPrompt = `
-Você é um analista de segurança cibernética especializado em análise de logs de SIEM. Sua tarefa é analisar o log fornecido, identificar o evento ou incidente de segurança ocorrido e redigir uma mensagem clara, concisa e profissional para o cliente, solicitando validações. A mensagem deve seguir rigorosamente o modelo abaixo, que foi elogiado por sua estrutura e clareza. Preencha todos os campos aplicáveis com base no log; se alguma informação não estiver disponível, indique "Não disponível". Use linguagem profissional, objetiva e acessível, evitando jargões técnicos excessivos, mas mantendo precisão.
+Você é um analista de segurança cibernética especializado em uma equipe de monitoramento. Sua tarefa é analisar o log fornecido, identificar os evento ocorrido e gerar um relatório claro, conciso e profissional para o cliente, solicitando validações. O relatório deve seguir rigorosamente o modelo abaixo, preenchendo todos os campos com base no log. Se uma informação não estiver disponível, use "N/A". Use linguagem profissional, objetiva e acessível, evitando jargões técnicos excessivos, mas mantendo precisão.
 
-Instruções específicas:
-- Caso de uso: Descreva o caso com base no log, como falha de login ou acesso não autorizado.
-- Análise: Forneça uma análise técnica detalhada, incluindo contexto (ex.: tipo de evento), impacto potencial (ex.: interrupção de serviço) e implicações, derivadas do log.
-- Objetivo do caso de uso: Especifique o objetivo, como identificar falhas de autenticação ou detectar intrusões.
-- Fonte de dados utilizada na análise: Use "Windows Event Log" para logs XML ou "Syslog" para logs Syslog.
-- Justificativa para abertura do caso: Explique por que o evento justifica investigação, vinculando gravidade, tipo de evento, número de tentativas (se aplicável) e impacto potencial (ex.: comprometimento de credenciais).
-- Recomendações: Liste 3-5 recomendações práticas e acionáveis para mitigar o evento e prevenir recorrências, específicas ao evento (ex.: revisar credenciais para "Logon Failure") e alinhadas com padrões como NIST ou CIS Controls. Considere as categorias fornecidas (${safeCategories.join(', ')}).
-- Resultado: Derive do campo 'message' (ex.: "Failed" para "Login failed") ou use "N/A" se não aplicável.
-- Status: Use "N/A" a menos que o log forneça um campo 'status' explícito.
-- Campos ausentes: Use "N/A" se o campo não estiver no log.
-- Formatação: Preserve a estrutura exata, incluindo quebras de linha e emojis.
+**Instruções**:
+- **Caso de uso**: Descreva o evento (ex.: falha de login, acesso não autorizado) com base no log.
+- **Análise**: Forneça uma análise técnica detalhada, incluindo contexto (tipo de evento), impacto potencial (ex.: interrupção de serviço) e implicações.
+- **Objetivo do caso de uso**: Especifique o objetivo da análise (ex.: detectar intrusões, identificar falhas de autenticação).
+- **Fonte de dados**: Use "Windows Event Log" para logs XML ou "Syslog" para logs Syslog. Se não identificável, use "N/A".
+- **Justificativa**: Explique por que o evento justifica investigação, considerando gravidade, tipo de evento, número de tentativas (se aplicável) e impacto potencial (ex.: comprometimento de credenciais).
+- **Recomendações**: Liste 3-5 ações práticas e acionáveis para mitigar o evento e prevenir recorrências, alinhadas com padrões como NIST ou CIS Controls. Considere as categorias: ${safeCategories.join(', ')}.
+- **Resultado**: Derive do campo 'message' (ex.: "Failed" para "Login failed") ou use "N/A" se não aplicável.
+- **Status**: Use "N/A" a menos que o log forneça um campo 'status' explícito.
+- **Campos ausentes**: Use "N/A" para campos sem informação no log.
+- **Formatação**: Siga exatamente o modelo abaixo, incluindo quebras de linha e emojis. Retorne o relatório em texto puro, sem formatação adicional (ex.: markdown, HTML).
 
-Formato do Relatório:
+**Modelo do Relatório**:
 
 Prezados(as), ${saudacao}.
 
 Nossa equipe identificou uma atividade suspeita em seu ambiente. Seguem abaixo mais detalhes para validação:
 
 Caso de uso: [Descreva o caso de uso com base no log]
-🕵 Análise: [Forneça uma análise técnica detalhada]
+🕵 Análise: [Análise técnica detalhada]
 
-Objetivo do caso de uso: [Explique o objetivo da análise]
+Objetivo do caso de uso: [Objetivo da análise]
 
-📊Fonte de dados utilizada na análise: [Especifique a fonte]
+📊 Fonte de dados utilizada na análise: [Fonte do log]
 
-🧾Evidências
+🧾 Evidências
 Data do Log: [Data e hora do evento]
 Fonte do Log: [Sistema ou componente que gerou o log]
 Usuário de Origem: [Usuário que iniciou a atividade, se aplicável]
@@ -345,108 +345,129 @@ Usuário Afetado: [Usuário impactado, se aplicável]
 IP/Host de Origem: [IP ou host que iniciou a atividade]
 IP/Host Afetado: [IP ou host impactado]
 Localização (Origem/Impactado): [Localização geográfica ou lógica, se disponível]
-Tipo do Evento: [Tipo de evento, ex.: acesso não autorizado, tentativa de login]
+Tipo do Evento: [Tipo de evento, ex.: acesso não autorizado]
 Grupo: [Categoria do evento, ex.: segurança web, autenticação]
 Objeto: [Recurso alvo, ex.: diretório, arquivo]
 Nome do Objeto: [Nome específico do recurso]
 Tipo do Objeto: [Tipo de recurso, ex.: diretório web, banco de dados]
 Assunto: [Resumo do evento, ex.: tentativa de acesso a diretório restrito]
 Política: [Política de segurança violada, se aplicável]
-Nome da Ameaça: [Nome da ameaça, ex.: sondagem automatizada, SQL injection]
+Nome da Ameaça: [Nome da ameaça, ex.: sondagem automatizada]
 Nome do Processo: [Processo envolvido, se aplicável]
 Nome da Regra MPE: [Regra de monitoramento que disparou o alerta]
 Mensagem do Fornecedor: [Mensagem ou código de erro do sistema]
 ID do Fornecedor: [Identificador único do evento, se disponível]
 Identificador de Navegador: [User-agent ou identificador, se aplicável]
-Ação: [Ação realizada, ex.: tentativa de acesso, execução de comando]
+Ação: [Ação realizada, ex.: tentativa de acesso]
 Status: [Status da ação, ex.: sucesso, falha]
 Resultado: [Resultado final, ex.: bloqueado, permitido]
 Detalhes dos IOCs: ${iocDetails}
 
-🕵 Justificativa para abertura do caso: [Forneça uma justificativa clara]
+🕵 Justificativa para abertura do caso: [Justificativa clara]
 
-📌Recomendações: [Liste 3-5 recomendações específicas que a equipe do cliente possa seguir]
+📌 Recomendações:
+1. [Recomendação 1]
+2. [Recomendação 2]
+3. [Recomendação 3]
+4. [Recomendação 4, se aplicável]
+5. [Recomendação 5, se aplicável]
 
-Gere o relatório EXATAMENTE no formato acima, preenchendo TODOS os campos listados com base no log, incluindo.
+**Log fornecido**: ${log}
+
+Gere o relatório EXATAMENTE no formato especificado, preenchendo todos os campos com base no log fornecido.
 `;
         const refinePrompt = `
-Você é um analista de segurança cibernética especializado em análise de logs de SIEM e refino de regras. Sua tarefa é analisar o log fornecido, identificar o evento ou incidente de segurança, determinar se o alerta gerado é um falso positivo, e redigir uma solicitação clara, concisa e profissional para a equipe de sustentação, solicitando a validação de um possível refino da regra. A mensagem deve seguir rigorosamente o modelo abaixo, que foi elogiado por sua clareza e estrutura. Preencha todos os campos aplicáveis com base no log; se alguma informação não estiver disponível, indique "Não disponível". Use linguagem técnica, mas clara, adequada para a equipe de sustentação.
+Você é um analista de segurança cibernética especializado em análise de monitoramento e refino de regras. Sua tarefa é analisar o log fornecido, identificar o evento ocorrido, determinar se o alerta gerado é um falso positivo e redigir uma solicitação clara, concisa e profissional para a equipe de sustentação, solicitando a validação de um possível refino da regra. O relatório deve seguir rigorosamente o modelo abaixo, preenchendo todos os campos com base no log. Se uma informação não estiver disponível, use "Não disponível". Use linguagem técnica, mas clara, adequada para a equipe de sustentação.
+
+**Instruções**:
+- **Cabeçalho**: Inclua o nome da regra no título. Use "N/A" se não disponível no log.
+- **Saudação e Introdução**: Use uma saudação profissional (ex.: "Prezados, bom dia") e explique brevemente o contexto do alerta, destacando a possibilidade de falsos positivos.
+- **Justificativa**:
+  - **Exemplo de evento relevante**: Descreva o evento detectado (ex.: data, IP, ação, sistema afetado) com base no log.
+  - **Motivo do falso positivo**: Explique por que o alerta é considerado um falso positivo (ex.: atividade legítima, comportamento esperado de uma aplicação).
+- **Solicitação**: Formule uma solicitação clara para a equipe de sustentação, sugerindo ações específicas (ex.: exclusão de IPs, ajuste de parâmetros, revisão de assinaturas).
+- **Campos ausentes**: Use "Não disponível" para campos sem informação no log.
+- **Formatação**: Siga exatamente o modelo abaixo, incluindo quebras de linha e emojis. Retorne o relatório em texto puro, sem formatação adicional (ex.: markdown, HTML).
+
+**Modelo do Relatório**:
 
 Solicitação de Refino de Regra no SIEM - [Nome da Regra]
 
-[Uma saudação, ex.: "Prezados, bom dia", seguida de uma breve explicação do que está acontecendo, ex.: "Identificamos um alerta gerado pela regra [Nome da Regra] no SIEM, que pode estar gerando falsos positivos, impactando a eficiência do monitoramento."]
+[Prezados, ${saudacao}. Identificamos um alerta gerado pela regra [Nome da Regra] no SIEM, que pode estar gerando falsos positivos, impactando a eficiência do monitoramento.]
 
-🔍Justificativa:
-- Exemplo de evento relevante: [Descrição do evento detectado pelo alerta, incluindo detalhes como data, IP, ação, ou sistema afetado.]
-- Motivo do falso positivo: [Explicação do porquê o alerta é considerado um falso positivo, ex.: "O evento reflete uma atividade legítima do sistema, como uma varredura autorizada ou comportamento esperado de uma aplicação."]
+🔍 Justificativa:
+- Exemplo de evento relevante: [Descrição do evento detectado, incluindo detalhes como data, IP, ação ou sistema afetado]
+- Motivo do falso positivo: [Explicação do porquê o alerta é considerado um falso positivo]
 
-📌Solicitação:
+📌 Solicitação:
 [Solicitação clara para a equipe de sustentação, ex.: "Solicitamos a validação da regra [Nome da Regra] para verificar se ajustes são necessários, como exclusão de IPs específicos, ajuste de parâmetros ou revisão de assinaturas."]
 
-🛡️Considerações Finais:
-
+🛡️ Considerações Finais:
 📋 Nome do Alerta: [Nome do alerta no SIEM]
 📋 Sub-ID do Evento: [Identificador único do evento, se disponível]
 📋 Assinatura: [Assinatura da regra que gerou o alerta, se aplicável]
 📋 Amostra de Evidência: [Trecho do log ou evidência específica que ilustra o evento]
-📂 Caso no SIEM: [Número do caso ou chamado no SIEM para referência da equipe de sustentação]
+📂 Caso no SIEM: [Número do caso ou chamado no SIEM, se disponível]
 
-Gere o relatório EXATAMENTE no formato acima, preenchendo TODOS os campos listados com base no log, incluindo.
+**Log fornecido**: ${log}
 
-`;
+Gere o relatório EXATAMENTE no formato especificado, preenchendo todos os campos com base no log fornecido.`;
 
         const siemHealthPrompt = `
-Você é um analista de segurança cibernética especializado em monitoramento e manutenção da saúde de sistemas SIEM. Sua tarefa é analisar o log fornecido, identificar possíveis problemas relacionados à saúde do SIEM (ex.: falhas na coleta de logs, atrasos, falsos positivos, regras mal configuradas, ou integrações inativas), e redigir um relatório claro, conciso e profissional para a equipe responsável pela manutenção do SIEM, solicitando validação ou ações corretivas. O relatório deve seguir rigorosamente o modelo abaixo, que é baseado em um formato elogiado por sua clareza e estrutura. Preencha todos os campos aplicáveis com base no log; se alguma informação não estiver disponível, indique "Não disponível". Use linguagem técnica, mas acessível, adequada para a equipe de manutenção do SIEM.
+Você é um analista de segurança cibernética especializado em monitoramento e manutenção da saúde de sistemas SIEM. Sua tarefa é analisar o log fornecido, identificar possíveis problemas relacionados à saúde do SIEM (ex.: falhas na coleta de logs, atrasos, falsos positivos, regras mal configuradas, integrações inativas) e redigir um relatório claro, conciso e profissional para a equipe de manutenção do SIEM, solicitando validação ou ações corretivas. O relatório deve seguir rigorosamente o modelo abaixo, preenchendo todos os campos com base no log. Se uma informação não estiver disponível, use "Não disponível". Use linguagem técnica, mas acessível, adequada para a equipe de manutenção.
 
-Instruções específicas:
-- Caso de uso: Descreva o caso com base no log, como falha de login ou acesso não autorizado.
-- Análise: Forneça uma análise técnica detalhada, incluindo contexto (ex.: tipo de evento), impacto potencial (ex.: interrupção de serviço) e implicações, derivadas do log.
-- Objetivo do caso de uso: Especifique o objetivo, como identificar falhas de autenticação ou detectar intrusões.
-- Fonte de dados utilizada na análise: Use "Windows Event Log" para logs XML ou "Syslog" para logs Syslog.
-- Justificativa para abertura do caso: Explique por que o evento justifica investigação, vinculando gravidade, tipo de evento, número de tentativas (se aplicável) e impacto potencial (ex.: comprometimento de credenciais).
-- Resultado: Derive do campo 'message' (ex.: "Failed" para "Login failed") ou "N/A" se não aplicável.
-- Status: Use "N/A" a menos que o log forneça um campo 'status' explícito.
-- Campos ausentes: Use "N/A" se o campo não estiver no log.
-- Formatação: Preserve a estrutura exata, incluindo quebras de linha e emojis.
+**Instruções**:
+- **Caso de uso**: Descreva o problema identificado (ex.: falha na coleta de logs, atraso na ingestão) com base no log.
+- **Justificativa**: Explique por que o evento indica um problema na saúde do SIEM, considerando impacto (ex.: lacunas no monitoramento) e gravidade.
+- **Objetivo do caso de uso**: Especifique o objetivo da análise (ex.: garantir coleta em tempo real, corrigir regras mal configuradas).
+- **Fonte de dados**: Use "Windows Event Log" para logs XML, "Syslog" para logs Syslog, ou "N/A" se não identificável.
+- **Campos ausentes**: Use "Não disponível" para campos sem informação no log.
+- **Resultado**: Derive do campo 'message' (ex.: "Failed" para "Log collection failed") ou use "N/A" se não aplicável.
+- **Status**: Use "N/A" a menos que o log forneça um campo 'status' explícito.
+- **Formatação**: Siga exatamente o modelo abaixo, incluindo quebras de linha e emojis. Retorne o relatório em texto puro, sem formatação adicional (ex.: markdown, HTML).
 
-Prezados(as), [saudação, ex.: bom dia]
+**Modelo do Relatório**:
+
+Prezados(as), ${saudacao}.
 
 Nossa equipe identificou uma possível questão relacionada à saúde do SIEM que requer validação. Seguem abaixo mais detalhes para análise:
 
 Caso de uso: [Descrição do caso de uso, ex.: "Verificar a integridade da coleta de logs para identificar falhas ou atrasos na ingestão de dados."]
 
-🕵 Justificativa para abertura do caso: [Explicação do motivo pelo qual o log indica um problema na saúde do SIEM, ex.: "O log mostra um atraso significativo na ingestão de dados, sugerindo problemas na integração com a fonte de dados."]
+🕵 Justificativa para abertura do caso: [Explicação do motivo pelo qual o log indica um problema, ex.: "O log mostra um atraso significativo na ingestão de dados, sugerindo problemas na integração com a fonte de dados."]
 
-Objetivo do caso de uso: [Breve descrição do que o problema detectado pode indicar, ex.: "Garantir que os logs sejam coletados em tempo real para evitar lacunas no monitoramento de segurança."]
+Objetivo do caso de uso: [Objetivo da análise, ex.: "Garantir que os logs sejam coletados em tempo real para evitar lacunas no monitoramento de segurança."]
 
-📊 Fonte de dados utilizada na análise: [Fonte dos dados analisados, ex.: logs de sistema do SIEM, logs de integração, ou alertas internos]
+📊 Fonte de dados utilizada na análise: [Fonte dos dados, ex.: "Windows Event Log", "Syslog", "N/A"]
 
 🧾 Evidências:
 - Data do Log: [Data e hora do evento]
-- Fonte do Log: [Sistema ou componente que gerou o log, ex.: agente SIEM, conector]
-- Usuário de Origem: [Usuário associado ao evento, se aplicável]
+- Fonte do Log: [Sistema ou componente que gerou o log, ex.: agente SIEM]
+- Usuário de Origem: [Usuário associado, se aplicável]
 - Usuário Afetado: [Usuário impactado, se aplicável]
-- IP/Host de Origem: [IP ou host que gerou o evento, ex.: servidor do agente]
-- IP/Host Afetado: [IP ou host impactado, ex.: instância do SIEM]
+- IP/Host de Origem: [IP ou host que gerou o evento]
+- IP/Host Afetado: [IP ou host impactado]
 - Localização (Origem/Impactado): [Localização geográfica ou lógica, se disponível]
-- Tipo do Evento: [Tipo de evento, ex.: falha de integração, atraso na coleta]
-- Grupo: [Categoria do evento, ex.: saúde do SIEM, integração de dados]
-- Objeto: [Recurso alvo, ex.: conector, regra]
+- Tipo do Evento: [Tipo de evento, ex.: falha de integração]
+- Grupo: [Categoria do evento, ex.: saúde do SIEM]
+- Objeto: [Recurso alvo, ex.: conector]
 - Nome do Objeto: [Nome específico do recurso, ex.: Conector_Firewall_X]
-- Tipo do Objeto: [Tipo de recurso, ex.: conector, log]
-- Assunto: [Resumo do evento, ex.: falha na coleta de logs do firewall]
+- Tipo do Objeto: [Tipo de recurso, ex.: conector]
+- Assunto: [Resumo do evento, ex.: falha na coleta de logs]
 - Política: [Política ou configuração relevante, se aplicável]
-- Nome da Ameaça: [Nome do problema, ex.: atraso na ingestão, falha de parser]
-- Nome do Processo: [Processo envolvido, ex.: processo de ingestão de logs]
+- Nome da Ameaça: [Nome do problema, ex.: atraso na ingestão]
+- Nome do Processo: [Processo envolvido, ex.: ingestão de logs]
 - Nome da Regra MPE: [Regra que disparou o alerta, se aplicável]
 - Mensagem do Fornecedor: [Mensagem ou código de erro do sistema]
 - ID do Fornecedor: [Identificador único do evento, se disponível]
 - Identificador de Navegador: [User-agent, se aplicável, ou "Não disponível"]
-- Ação: [Ação relacionada ao evento, ex.: tentativa de coleta, parsing de log]
-- Status: [Status da ação, ex.: falha, parcial]
-- Resultado: [Resultado final, ex.: log não coletado, alerta ignorado]
+- Ação: [Ação relacionada, ex.: tentativa de coleta]
+- Status: [Status da ação, ex.: falha]
+- Resultado: [Resultado final, ex.: log não coletado]
 
-Gere o relatório EXATAMENTE no formato acima, preenchendo TODOS os campos listados com base no log, incluindo.
+**Log fornecido**: ${log}
+
+Gere o relatório EXATAMENTE no formato especificado, preenchendo todos os campos com base no log fornecido.
 
 `;
 
