@@ -17,6 +17,59 @@ function getStatusIcon(type) {
     }
 }
 
+// Funções para gerenciar severidade
+function getSeverityLevel(alertType) {
+    const severityMap = {
+        'critical': 90,
+        'high': 70,
+        'medium': 50,
+        'low': 30,
+        'info': 10
+    };
+    
+    const patterns = {
+        'critical': /ataque|exploit|vulnerabilidade crítica|critical|exploit/i,
+        'high': /malware|phishing|invasão|high/i,
+        'medium': /suspeito|anomalia|tentativa|medium/i,
+        'low': /aviso|alerta menor|low/i,
+        'info': /informação|log|info/i
+    };
+    
+    if (severityMap.hasOwnProperty(alertType.toLowerCase())) {
+        return severityMap[alertType.toLowerCase()];
+    }
+    
+    for (const [level, pattern] of Object.entries(patterns)) {
+        if (pattern.test(alertType)) {
+            return severityMap[level];
+        }
+    }
+    
+    return 20;
+}
+
+function getSeverityEmoji(severity) {
+    if (severity >= 80) return '🔴';
+    if (severity >= 60) return '🟠';
+    if (severity >= 40) return '🟡';
+    if (severity >= 20) return '🔵';
+    return '🟢';
+}
+
+function formatSeverity(alertType) {
+    const severity = getSeverityLevel(alertType);
+    const emoji = getSeverityEmoji(severity);
+    return `${emoji} <span class="severity-${getSeverityClass(severity)}">${severity}%</span>`;
+}
+
+function getSeverityClass(severity) {
+    if (severity >= 80) return 'critical';
+    if (severity >= 60) return 'high';
+    if (severity >= 40) return 'medium';
+    if (severity >= 20) return 'low';
+    return 'info';
+}
+
 // Exibe o modal com mensagem
 function showModal(title, message) {
     const modal = document.getElementById('modal');
@@ -78,55 +131,21 @@ function removeIoc(button) {
     }
 }
 
-// Alterna visibilidade do grupo de categorias
-function toggleTypeGroup(titleElement) {
-    const group = titleElement ? titleElement.parentElement : null;
-    if (group) {
-        const isCollapsed = group.classList.contains('collapsed');
-        group.classList.toggle('collapsed', !isCollapsed);
-        const chevron = titleElement.querySelector('.fa-chevron-down');
-        if (chevron) {
-            chevron.classList.toggle('fa-chevron-up', isCollapsed);
-        }
-    }
-}
-
-// Atualiza as categorias selecionadas
-function updateCategories() {
-    const selectedCategories = Array.from(document.querySelectorAll('#incidentCategoriesContainer input[type="checkbox"]:checked'))
-        .filter(cb => cb.id !== 'refine-rule' && cb.id !== 'siem-health')
-        .map(cb => cb.value);
-    console.log('Categorias selecionadas:', selectedCategories);
-}
-
-// Alterna visibilidade do grupo de monitoramento
-function toggleMonitoringCategory() {
-    const checkbox = document.getElementById('monitoring-toggle');
-    const options = document.querySelector('.category-options');
-    if (checkbox && options) {
-        options.style.display = checkbox.checked ? 'block' : 'none';
-    }
-}
-
 // Configura os tipos de relatório
 function setupReportTypeOptions() {
     const reportOptions = document.querySelectorAll('.report-type-option');
 
     reportOptions.forEach(option => {
-        // Verifica seleção prévia
         const radio = option.querySelector('input[type="radio"]');
         if (radio && radio.checked) {
             option.classList.add('selected');
         }
 
-        // Click na opção
         option.addEventListener('click', function (e) {
             if (e.target.tagName === 'LABEL' || e.target.tagName === 'I') return;
-
             selectReportOption(this);
         });
 
-        // Click no label
         const label = option.querySelector('label');
         if (label) {
             label.addEventListener('click', function (e) {
@@ -140,14 +159,12 @@ function setupReportTypeOptions() {
 function selectReportOption(selectedOption) {
     const reportOptions = document.querySelectorAll('.report-type-option');
 
-    // Remove seleção anterior
     reportOptions.forEach(opt => {
         opt.classList.remove('selected');
         const radio = opt.querySelector('input[type="radio"]');
         if (radio) radio.checked = false;
     });
 
-    // Adiciona nova seleção
     selectedOption.classList.add('selected');
     const radio = selectedOption.querySelector('input[type="radio"]');
     if (radio) {
@@ -155,87 +172,100 @@ function selectReportOption(selectedOption) {
         radio.dispatchEvent(new Event('change'));
     }
 
-    // Esconde mensagem de erro
     const errorElement = document.getElementById('reportTypeError');
     if (errorElement) errorElement.style.display = 'none';
 }
 
-// Gera o relatório usando sua API real
+// Gera o relatório
 async function gerarRelatorio() {
     const log = document.getElementById('log')?.value.trim();
     const reportOutput = document.getElementById('reportOutput');
     const selectedReportType = document.querySelector('input[name="report-type"]:checked');
     const reportTypeError = document.getElementById('reportTypeError');
 
-    if (!log) {
-        showModal('Erro', 'Por favor, insira um log válido.');
-        updateStatus('ERRO: Log não fornecido', 'error');
+    if (!log || log.length < 10) {
+        showModal('Erro', 'Por favor, insira um log válido (mínimo 10 caracteres).');
+        updateStatus('ERRO: Log inválido', 'error');
         return;
     }
 
     if (!selectedReportType) {
         if (reportTypeError) reportTypeError.style.display = 'block';
-        updateStatus('ERRO: Selecione um tipo de relatório.', 'error');
+        updateStatus('ERRO: Selecione um tipo de relatório', 'error');
         return;
     }
 
-    if (reportTypeError) reportTypeError.style.display = 'none';
-
-    const reportType = selectedReportType.value;
-    const iocItems = document.querySelectorAll('#ioc-list .ioc-item input');
-    const iocs = Array.from(iocItems).map(input => input.value);
-    const selectedCategories = Array.from(document.querySelectorAll('#incidentCategoriesContainer input[type="checkbox"]:checked'))
-        .filter(cb => cb.name !== 'report-type')
-        .map(cb => cb.value);
-
-    const payload = {
-        log,
-        iocs,
-        categories: selectedCategories,
-        reportType
-    };
-
-    updateStatus('PROCESSANDO: Enviando log e IOCs para análise...', 'processing');
+    updateStatus('PROCESSANDO: Analisando log...', 'processing');
 
     try {
+        const iocs = Array.from(document.querySelectorAll('#ioc-list .ioc-item input'))
+            .map(input => input.value.trim())
+            .filter(ioc => ioc.length > 0);
+
         const response = await fetch('http://localhost:30000/api/report', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                log,
+                iocs,
+                reportType: selectedReportType.value
+            })
         });
-
-        if (!response.ok) {
-            throw new Error(`Erro HTTP! status: ${response.status}`);
-        }
 
         const data = await response.json();
 
-        if (reportOutput && data.report) {
-            reportOutput.textContent = data.report;
-            const reportContainer = document.getElementById('reportContainer');
-            if (reportContainer) {
-                reportContainer.innerHTML = '';
-                reportContainer.appendChild(reportOutput);
-                // Remova esta linha: reportOutput.style.display = 'block';
-            }
-            updateStatus('SUCESSO: Relatório gerado com sucesso!', 'success');
+        if (!response.ok) {
+            throw new Error(data.error || `Erro ${response.status}: ${response.statusText}`);
         }
+
+        if (reportOutput) {
+            let reportContent = data.report;
+            
+            // Adiciona severidade ao relatório
+            let alertType = 'info';
+            const alertPattern = /Tipo de Alerta:\s*(.*)/i;
+            const match = reportContent.match(alertPattern);
+            if (match && match[1]) {
+                alertType = match[1].trim();
+            }
+            
+            const severity = formatSeverity(alertType);
+            reportContent = reportContent.replace(
+                /(Tipo de Alerta:\s*.*)/i,
+                `$1\nSeveridade: ${severity}`
+            );
+            
+            reportOutput.innerHTML = reportContent.replace(/\n/g, '<br>');
+            reportOutput.style.display = 'block';
+            updateStatus('SUCESSO: Relatório gerado', 'success');
+        }
+
     } catch (error) {
-        console.error('Erro ao gerar relatório:', error);
-        showModal('Erro', `Erro ao conectar com o servidor: ${error.message}`);
-        updateStatus(`ERRO: ${error.message}`, 'error');
+        console.error('Erro detalhado:', error);
+        const errorMsg = error.message.includes('Failed to fetch')
+            ? 'Falha na conexão com o servidor'
+            : error.message;
+
+        showModal('Erro no Servidor', `Detalhes: ${errorMsg}`);
+        updateStatus(`ERRO: ${errorMsg}`, 'error');
     }
 }
 
 // Copia o relatório para a área de transferência
 function copyReport() {
-    const reportOutput = document.getElementById('reportOutput')?.textContent;
-    if (!reportOutput || reportOutput === 'Seu relatório será exibido aqui.') {
+    const reportOutput = document.getElementById('reportOutput');
+    if (!reportOutput || reportOutput.textContent === 'Seu relatório será exibido aqui.') {
         showModal('Aviso', 'Nenhum relatório para copiar.');
         return;
     }
 
-    navigator.clipboard.writeText(reportOutput).then(() => {
+    // Remove tags HTML ao copiar
+    const textToCopy = reportOutput.textContent || reportOutput.innerText;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
         showModal('Sucesso', 'Relatório copiado para a área de transferência!');
         setTimeout(closeModal, 2000);
     }).catch(err => {
@@ -244,15 +274,7 @@ function copyReport() {
     });
 }
 
-// Navega para uma tela
-function navigateTo(hash) {
-    if (hash) {
-        window.location.hash = hash;
-        handleNavigation();
-    }
-}
-
-// Gerencia navegação entre telas
+// Navegação
 function handleNavigation() {
     const screens = document.querySelectorAll('.screen');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -272,7 +294,7 @@ function handleNavigation() {
     }
 }
 
-// Modifique o evento DOMContentLoaded para inicializar com mensagem visível
+// Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     updateStatus('AGUARDANDO ENTRADA...', 'waiting');
     handleNavigation();
@@ -281,10 +303,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const reportOutput = document.getElementById('reportOutput');
     if (reportOutput) {
         reportOutput.textContent = 'Seu relatório será exibido aqui.';
-        // Garanta que está visível
         reportOutput.style.display = 'block';
     }
 
-    // Configura os tipos de relatório
+    const addIocButton = document.getElementById('addIocButton');
+    if (addIocButton) {
+        addIocButton.addEventListener('click', addIocFromMainField);
+    }
+
     setupReportTypeOptions();
-})
+});

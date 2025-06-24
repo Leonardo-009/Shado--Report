@@ -1,0 +1,845 @@
+/* Estilos base - Tema Preto, Cinza e Vermelho */
+:root {
+  --primary-color: #e63946; /* Vermelho */
+  --secondary-color: #a4161a; /* Vermelho escuro */
+  --accent-color: #e5383b; /* Vermelho mais claro */
+  --background-dark: #0b090a; /* Preto quase puro */
+  --background-darker: #000000; /* Preto */
+  --background-light: #161a1d; /* Cinza muito escuro */
+  --background-lighter: #1f2937; /* Cinza escuro */
+  --text-primary: #f5f3f4; /* Branco suave */
+  --text-secondary: #d3d3d3; /* Cinza claro */
+  --error-color: #e5383b; /* Vermelho */
+  --warning-color: #f48c06; /* Laranja */
+  --success-color: #52b788; /* Verde */
+  --info-color: #1a759f; /* Azul */
+  --border-color: #333; /* Cinza escuro para bordas */
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-dark);
+  color: var(--text-primary);
+}
+
+/* Navbar - Estilo mais sombrio */
+.navbar {
+  background-color: var(--background-darker);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-shadow: 0 0 8px rgba(230, 57, 70, 0.3);
+}
+
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+.nav-link.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
+}
+
+/* Layout principal */
+.screen {
+  display: none;
+  min-height: calc(100vh - 70px);
+}
+
+.screen.active-screen {
+  display: block;
+}
+
+.screen-container {
+  display: flex;
+  min-height: calc(100vh - 70px);
+}
+
+.left-panel,
+.right-panel {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.left-panel {
+  border-right: 1px solid var(--border-color);
+  max-width: 50%;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Componentes - Estilo mais escuro */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1rem;
+  color: var(--primary-color);
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+textarea,
+input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  font-family: "Consolas", monospace;
+  resize: vertical;
+  margin-bottom: 1rem;
+  transition: border 0.3s;
+}
+
+textarea:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2);
+}
+
+textarea {
+  min-height: 150px;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.button-primary:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.generate-button {
+  margin-top: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.copy-button {
+  margin-top: 1rem;
+  background-color: var(--background-lighter);
+  color: var(--text-primary);
+}
+
+.copy-button:hover {
+  background-color: var(--background-light);
+}
+
+/* Status - Estilo mais impactante */
+.status {
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  border-left: 4px solid;
+}
+
+.status-waiting {
+  background-color: var(--background-light);
+  color: var(--text-secondary);
+  border-left-color: var(--text-secondary);
+}
+
+.status-processing {
+  background-color: rgba(244, 140, 6, 0.1);
+  color: var(--warning-color);
+  border-left-color: var(--warning-color);
+}
+
+.status-success {
+  background-color: rgba(82, 183, 136, 0.1);
+  color: var(--success-color);
+  border-left-color: var(--success-color);
+}
+
+.status-error {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--error-color);
+  border-left-color: var(--error-color);
+}
+
+/* IOC List - Estilo mais escuro */
+.ioc-input-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ioc-input-group {
+  flex: 1;
+}
+
+.ioc-input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ioc-list {
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: var(--background-light);
+}
+
+.ioc-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--background-light);
+  transition: background-color 0.3s;
+}
+
+.ioc-item:hover {
+  background-color: var(--background-lighter);
+}
+
+.ioc-item:last-child {
+  border-bottom: none;
+}
+
+.ioc-item input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  padding: 0.5rem;
+}
+
+.ioc-item button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s;
+}
+
+.ioc-item button:hover {
+  color: var(--primary-color);
+}
+
+.ioc-type {
+  font-size: 0.75rem;
+  background-color: var(--background-darker);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Report output - Estilo terminal moderno */
+.report-output-container {
+  position: relative;
+}
+
+.report-output {
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1.5rem;
+  min-height: 300px;
+  white-space: pre-wrap;
+  font-family: "Consolas", "Courier New", monospace;
+  overflow-y: auto;
+  max-height: 70vh;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.report-output::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, var(--background-light), transparent);
+  pointer-events: none;
+}
+
+.report-output::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to top, var(--background-light), transparent);
+  pointer-events: none;
+}
+
+/* Opções de Tipo de Relatório - Estilo moderno */
+.category-selection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-type-option {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-light);
+}
+
+.report-type-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.report-type-option.selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.3);
+}
+
+.report-type-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.report-type-option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  text-align: center;
+  height: 100%;
+}
+
+.report-type-option i {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+}
+
+.report-type-option.selected i {
+  color: var(--primary-color);
+}
+
+.report-type-option label span {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.report-type-option:hover label span {
+  color: var(--primary-color);
+}
+
+/* Estilo específico para cada tipo de relatório */
+#option-base {
+  border-top: 3px solid var(--primary-color);
+}
+
+#option-base.selected {
+  background-color: rgba(230, 57, 70, 0.1);
+}
+
+#option-refine {
+  border-top: 3px solid var(--warning-color);
+}
+
+#option-refine i {
+  color: var(--warning-color);
+}
+
+#option-refine.selected {
+  background-color: rgba(244, 140, 6, 0.1);
+}
+
+#option-siem {
+  border-top: 3px solid var(--success-color);
+}
+
+#option-siem i {
+  color: var(--success-color);
+}
+
+#option-siem.selected {
+  background-color: rgba(82, 183, 136, 0.1);
+}
+
+/* Result tables - Estilo mais escuro */
+.results-container {
+  margin-top: 1rem;
+}
+
+.results-table {
+  overflow-x: auto;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: var(--background-darker);
+  color: var(--primary-color);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.no-results {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--background-light);
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.no-results i {
+  font-size: 2rem;
+  color: var(--success-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  padding: 1rem;
+  background-color: rgba(230, 57, 70, 0.1);
+  border-radius: 4px;
+  border-left: 4px solid var(--error-color);
+}
+
+/* Severity indicators - Estilo mais impactante */
+.severity-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background-color: var(--background-light);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+.severity-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.severity-high {
+  background-color: rgba(230, 57, 70, 0.2);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+.severity-medium {
+  background-color: rgba(244, 140, 6, 0.2);
+  color: var(--warning-color);
+  border: 1px solid var(--warning-color);
+}
+
+.severity-low {
+  background-color: rgba(82, 183, 136, 0.2);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.severity-unknown {
+  background-color: rgba(211, 211, 211, 0.2);
+  color: var(--text-secondary);
+  border: 1px solid var(--text-secondary);
+}
+
+.ioc-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ioc-link:hover {
+  text-decoration: underline;
+}
+
+/* Chart container - Estilo mais escuro */
+.chart-container {
+  padding: 1.5rem 2rem;
+  background-color: var(--background-darker);
+  margin-top: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.severity-chart {
+  margin-top: 1rem;
+  height: 400px;
+}
+
+/* Modal - Estilo mais escuro */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background-color: var(--background-darker);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  border: 1px solid var(--primary-color);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+
+.close-button:hover {
+  color: var(--primary-color);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .screen-container {
+    flex-direction: column;
+  }
+
+  .left-panel,
+  .right-panel {
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ioc-input-container {
+    flex-direction: column;
+  }
+
+  .category-selection {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Efeitos extras */
+::selection {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+//teste
+
+/* Variáveis CSS para consistência */
+:root {
+  --primary-color: #e63946; /* Vermelho vibrante */
+  --border-color: #d1d5db; /* Cinza claro */
+  --background-light: #f9fafb; /* Cinza muito claro */
+  --text-primary: #1f2937; /* Cinza escuro */
+  --shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --shadow-selected: 0 0 0 2px rgba(230, 57, 70, 0.3);
+}
+
+/* Container do select para melhor controle */
+.select-container {
+  position: relative;
+  width: 280px;
+  margin: 1rem 0;
+}
+
+/* Estilo principal do select */
+#iocType {
+  /* Reset do estilo padrão */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Estilo visual baseado no .report-type-option */
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Seta personalizada */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f2937'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+/* Efeito hover - similar ao .report-type-option */
+#iocType:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-color);
+}
+
+/* Efeito focus - similar ao .selected */
+#iocType:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-selected);
+  transform: translateY(-1px);
+}
+
+/* Estilo para as opções */
+#iocType option {
+  padding: 0.75rem 1rem;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+/* Estilo para a opção selecionada */
+#iocType option:checked {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Efeito de ícone (opcional) */
+.select-container::before {
+  content: "🔍";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+#iocType {
+  padding-left: 2.5rem;
+}
+
+.select-container:hover::before {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
+/* Versão dark mode (opcional) */
+.dark-mode .select-container #iocType {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #f7fafc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f7fafc'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+}
+
+.dark-mode .select-container #iocType option {
+  background-color: #2d3748;
+  color: #f7fafc;
+}
+
+.dark-mode .select-container #iocType option:checked {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.dark-mode .select-container::before {
+  color: #f7fafc;
+  opacity: 0.8;
+}
+
+/* Efeito de "card" quando aberto (para navegadores que suportam) */
+#iocType:focus-within {
+  box-shadow: var(--shadow-hover), var(--shadow-selected);
+}
+#iocType option[value="ip"] {
+    background-image: url('ip-icon.svg');
+    background-repeat: no-repeat;
+    background-position: left 0.5rem center;
+    padding-left: 2rem;
+}
+
+#iocType option[value="url_hash"] {
+    background-image: url('url-icon.svg');
+    background-repeat: no-repeat;
+    background-position: left 0.5rem center;
+    padding-left: 2rem;
+}
+.select-container {
+    perspective: 1000px;
+}
+
+#iocType:focus {
+    transform: translateY(-3px) rotateX(5deg);
+}
+@keyframes fadeInOptions {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#iocType option {
+    animation: fadeInOptions 0.3s ease-out forwards;
+}
