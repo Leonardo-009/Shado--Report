@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/global.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/x-icon" href="/shadow.ico">
+
+</head>
+
+<body class="dark-theme">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i> Shadow
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="./index.html" class="nav-link">Gerar Relatório</a></li>
+            <li><a href="./analyze-iocs.html" class="nav-link active">Análise de IOCs</a></li>
+            <!--<li><a href="./glpi.html" class="nav-link">Abertura No GLPI</a></li>-->
+        </ul>
+    </nav>
+
+    <div class="screen active-screen">
+        <div class="screen-container">
+            <div class="left-panel">
+                <div class="container">
+                    <h1>Análise de IOCs</h1>
+                    <div class="status status-waiting" id="status">
+                        <i class="fas fa-clock"></i> AGUARDANDO ENTRADA...
+                    </div>
+                    <div class="section-title">
+                        <i class="fas fa-network-wired"></i>
+                        <h2>Lista de IOCs</h2>
+                    </div>
+                    <textarea id="iocList" placeholder="Cole IPs aqui (um por linha, ex.: 8.8.8.8)"></textarea>
+
+                    <div class="select-container">
+                        <select id="iocType" onchange="updatePlaceholder()">
+                            <option value="ip">IP (AbuseIPDB)</option>
+                            <option value="url_hash">URL/Hash (VirusTotal)</option>
+                        </select>
+                    </div>
+
+                    <button class="generate-button button button-primary" id="analyzeButton">Analisar IOCs</button>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="container">
+                    <div class="section-title">
+                        <i class="fas fa-list"></i>
+                        <h2>IOCs Analisados</h2>
+                    </div>
+                    <div class="report-output-container">
+                        <div id="iocResults" class="report-output">Resultados serão exibidos aqui.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container" id="distributionChartContainer">
+            <div class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                <h2>Classificação dos IPs</h2>
+            </div>
+            <canvas id="iocChart"></canvas>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">×</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+
+    <script src="./js/script-analyze-iocs.js"></script>
+</body>
+
+</html>

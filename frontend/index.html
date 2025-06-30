@@ -4,25 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shadow Report</title>
+    <title>Shadow</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="./global.css">
+    <link rel="stylesheet" href="./css/global.css">
+    <link rel="icon" type="image/x-icon" href="/shadow.ico">
 </head>
 
 <body class="dark-theme">
     <nav class="navbar">
         <div class="navbar-brand">
-            <i class="fas fa-shield-alt"></i> Shadow Report
+            <i class="fas fa-shield-alt"></i> Shadow
         </div>
         <ul class="navbar-menu">
             <li><a href="./index.html" class="nav-link active" data-screen="home-screen">Gerar Relatório</a></li>
-            <li><a href="./IP/analyze-ips.html" class="nav-link">Análise de IPs</a></li>
+            <li><a href="./analyze-iocs.html" class="nav-link">Análise de IOCs</a></li>
+            <!--<li><a href="./glpi.html" class="nav-link">Abertura No GLPI</a></li>-->
         </ul>
     </nav>
 
     <div class="screen active-screen" id="home-screen">
         <div class="screen-container">
-            <!-- Painel Esquerdo: ShadowDef Relatórios de Segurança -->
             <div class="left-panel">
                 <div class="container">
                     <h1>Shadow Relatórios</h1>
@@ -37,52 +38,51 @@
                     <textarea id="log" placeholder="Cole o conteúdo do log aqui"></textarea>
                     <!--
                     <div class="section-title">
-                        <i class="fas fa-crosshairs"></i>
-                        <h2>Indicadores de Compromisso (IOCs)</h2>
+                        <i class="fas fa-tags"></i>
+                        <h2>Categorias de Análise</h2>
                     </div>
-                    <div class="ioc-input-group">
-                        <input type="text" id="main-ioc-field" placeholder="Adicionar IP, Hash, Domínio...">
-                        <button class="add-ioc-button button button-primary" id="addIocButton">
-                            <i class="fas fa-plus"></i> Adicionar IOC
-                        </button>
-                    </div>
-                    <div id="ioc-list" class="ioc-list"></div>
-                -->
+                    <input type="text" id="categories" placeholder="Ex.: autenticação, malware, phishing">
+                    -->
+
                     <div class="section-title">
                         <i class="fas fa-tags"></i>
                         <h2>Tipo de Relatório</h2>
                     </div>
                     <div id="reportTypeContainer" class="category-selection">
                         <div class="report-type-option" id="option-base">
-                            <input type="radio" id="base-report" name="report-type" value="base">
-                            <label for="base-report">
-                                <i class="fas fa-file-alt"></i>
-                                Relatório
-                            </label>
+                            <input type="radio" id="base-report" name="report-type" value="base" checked>
+                            <label for="base-report"><i class="fas fa-file-alt"></i> Relatório</label>
                         </div>
                         <div class="report-type-option" id="option-refine">
                             <input type="radio" id="refine-rule" name="report-type" value="refine">
-                            <label for="refine-rule">
-                                <i class="fas fa-tools"></i>
-                                Refino de Regra
-                            </label>
+                            <label for="refine-rule"><i class="fas fa-tools"></i> Refino de Regra</label>
                         </div>
                         <div class="report-type-option" id="option-siem">
                             <input type="radio" id="siem-health" name="report-type" value="siem-health">
-                            <label for="siem-health">
-                                <i class="fas fa-heartbeat"></i>
-                                Saúde do SIEM
-                            </label>
+                            <label for="siem-health"><i class="fas fa-heartbeat"></i> Saúde do SIEM</label>
                         </div>
                         <p id="reportTypeError" style="display: none;">Selecione um tipo de relatório.</p>
                     </div>
 
-                    <button class="generate-button button button-primary" onclick="gerarRelatorio()">Gerar
-                        Relatório</button>
+                    <div id="refineRuleFields" class="refine-rule-fields" style="display: none;">
+                        <div class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            <h2>Detalhes do Refino de Regra</h2>
+                        </div>
+                        <div class="form-group">
+                            <label for="alertName">Nome do Alerta</label>
+                            <input type="text" id="alertName" placeholder="Ex.: Alerta de Tentativa de Login">
+                        </div>
+                        <div class="form-group">
+                            <label for="ruleName">Nome da Regra</label>
+                            <input type="text" id="ruleName" placeholder="Ex.: Regra_Login_Falha">
+                        </div>
+                    </div>
+
+                    <button class="generate-button button button-primary" id="reportButton">Gerar Relatório</button>
                 </div>
             </div>
 
-            <!-- Painel Direito: Relatório Gerado -->
             <div class="right-panel">
                 <div class="container">
                     <div class="section-title">
@@ -108,7 +108,7 @@
             <p id="modalMessage"></p>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="./js/script.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,18 @@
+#Instalar Ollama:
+#Baixe e instale o Ollama: https://ollama.ai/.
+#Execute o comando para baixar o modelo Mistral:
+
+ollama pull mistral
+
+#Verifique se o modelo está funcionando
+ollama run mistral
+
+#Instalar Dependências:
+#Crie um ambiente Python (recomendado: Python 3.8+):
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+#Instale LangChain e dependências
+pip install langchain langchain-community fastapi uvicorn
+

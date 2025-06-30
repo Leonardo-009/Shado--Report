@@ -1,7 +1,0 @@
-npm install
-npm install xml2js
-npm install xml2js axios cors dotenv
-npm init -y
-npm install express axios cors xml2js dotenv
-npm install ip-range-check
-npm start

@@ -1,0 +1,547 @@
+<!-- Em costrução -->
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório GLPI - Criar Ticket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-100: #f3f4f6;
+            --gray-700: #374151;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        
+        .navbar {
+            background-color: #1e1b4b;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: #a5b4fc;
+        }
+        
+        .nav-link.active {
+            border-bottom: 2px solid white;
+        }
+        
+        .screen-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 1024px) {
+            .screen-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: #1e1b4b;
+        }
+        
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .category-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .report-type-option {
+            position: relative;
+        }
+        
+        .report-type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .report-type-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .report-type-option label i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+        }
+        
+        .report-type-option input[type="radio"]:checked + label {
+            border-color: var(--primary);
+            background-color: #f5f3ff;
+        }
+        
+        .report-type-option input[type="radio"]:checked + label i {
+            color: var(--primary);
+        }
+        
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 0.5rem;
+            border: none;
+        }
+        
+        .button-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .button-primary:hover {
+            background-color: #4338ca;
+        }
+        
+        .button-secondary {
+            background-color: #e0e7ff;
+            color: var(--primary);
+        }
+        
+        .button-secondary:hover {
+            background-color: #c7d2fe;
+        }
+        
+        .generate-button {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        .status {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-top: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .status-waiting {
+            color: #4b5563;
+            background-color: #f3f4f6;
+        }
+        
+        .status-processing {
+            color: #92400e;
+            background-color: #fef3c7;
+        }
+        
+        .status-success {
+            color: #065f46;
+            background-color: #d1fae5;
+        }
+        
+        .status-error {
+            color: #991b1b;
+            background-color: #fee2e2;
+        }
+        
+        .report-output-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .report-output {
+            flex-grow: 1;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+        
+        .copy-button {
+            align-self: flex-end;
+        }
+        
+        .ticket-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            margin-top: 0.5rem;
+        }
+        
+        .ticket-link:hover {
+            text-decoration: underline;
+        }
+        
+        .history-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i> Shadow
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="./index.html" class="nav-link active" data-screen="home-screen">Gerar Relatório</a></li>
+            <li><a href="./analyze-iocs.html" class="nav-link">Análise de IOCs</a></li>
+            <li><a href="./glpi.html" class="nav-link">Abertura No GLPI</a></li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="screen-container">
+        <!-- Painel Esquerdo: Entrada de Dados -->
+        <div class="panel left-panel">
+            <div class="section-title">
+                <i class="fas fa-file-alt"></i>
+                <h2>Criar Relatório GLPI</h2>
+            </div>
+            <form id="ticketForm">
+                <!-- Título do Ticket -->
+                <div class="form-group">
+                    <label for="title">Título do Ticket</label>
+                    <input type="text" id="title" name="title" placeholder="Digite um título para o ticket">
+                </div>
+
+                <!-- Campo de Relatório -->
+                <div class="form-group">
+                    <label for="report">Relatório</label>
+                    <textarea id="report" name="report" placeholder="Descreva o relatório" required></textarea>
+                </div>
+
+                <!-- Tipo de Classificação -->
+                <div class="form-group">
+                    <label for="classification">Tipo de Classificação</label>
+                    <select id="classification" name="classification" required>
+                        <option value="">Selecione</option>
+                        <option value="1">Incidente</option>
+                        <option value="2">Requisição</option>
+                    </select>
+                </div>
+
+                <!-- Cliente -->
+                <div class="form-group">
+                    <label for="client">Cliente</label>
+                    <select id="client" name="client" required>
+                        <option value="">Carregando clientes...</option>
+                    </select>
+                </div>
+
+                <!-- Tipo de Relatório -->
+                <div class="category-selection">
+                    <div class="report-type-option" id="option-base">
+                        <input type="radio" name="reportType" id="base" value="base" checked>
+                        <label for="base">
+                            <i class="fas fa-file"></i>
+                            <span>Relatório Cliente</span>
+                        </label>
+                    </div>
+                    <div class="report-type-option" id="option-refine">
+                        <input type="radio" name="reportType" id="refine" value="refine">
+                        <label for="refine">
+                            <i class="fas fa-filter"></i>
+                            <span>Relatório Refinado</span>
+                        </label>
+                    </div>
+                    <div class="report-type-option" id="option-siem">
+                        <input type="radio" name="reportType" id="siem" value="siem">
+                        <label for="siem">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Relatório SIEM</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Botão de Envio -->
+                <button type="submit" class="button button-primary generate-button">
+                    <i class="fas fa-ticket-alt"></i> Criar Ticket
+                </button>
+            </form>
+            
+            <!-- Status -->
+            <div id="status" class="status status-waiting">Aguardando ação</div>
+        </div>
+
+        <!-- Painel Direito: Saída do Relatório -->
+        <div class="panel right-panel">
+            <div class="section-title">
+                <i class="fas fa-chart-line"></i>
+                <h2>Resultado</h2>
+            </div>
+            <div class="report-output-container">
+                <div id="reportOutput" class="report-output">O ticket criado aparecerá aqui</div>
+                <button id="copyReport" class="button button-secondary copy-button">
+                    <i class="fas fa-copy"></i> Copiar
+                </button>
+            </div>
+            
+            <!-- Histórico Recente -->
+            <div class="section-title" style="margin-top: 2rem;">
+                <i class="fas fa-history"></i>
+                <h2>Histórico Recente</h2>
+            </div>
+            <div id="ticketHistory" style="max-height: 200px; overflow-y: auto;">
+                <div class="history-item">
+                    <span>Nenhum ticket criado recentemente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Carregar clientes
+            await loadClients();
+            
+            // Configurar form
+            const form = document.getElementById('ticketForm');
+            const statusElement = document.getElementById('status');
+            const reportOutput = document.getElementById('reportOutput');
+            const copyButton = document.getElementById('copyReport');
+            const historyElement = document.getElementById('ticketHistory');
+            
+            // Carregar histórico do localStorage
+            loadHistory();
+            
+            // Enviar form
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = {
+                    title: document.getElementById('title').value,
+                    report: document.getElementById('report').value,
+                    classification: document.getElementById('classification').value,
+                    client: document.getElementById('client').value,
+                    reportType: document.querySelector('input[name="reportType"]:checked').value
+                };
+                
+                statusElement.textContent = "Criando ticket no GLPI...";
+                statusElement.className = "status status-processing";
+                
+                try {
+                    const response = await fetch('/api/tickets', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        statusElement.textContent = "Ticket criado com sucesso!";
+                        statusElement.className = "status status-success";
+                        
+                        // Mostrar resultado
+                        reportOutput.innerHTML = `
+                            Ticket criado no GLPI:
+                            Número: ${result.ticketId}
+                            Cliente: ${formData.client}
+                            Tipo: ${formData.reportType}
+                            <a href="${result.ticketLink}" target="_blank" class="ticket-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Abrir no GLPI
+                            </a>
+                        `;
+                        
+                        // Adicionar ao histórico
+                        addToHistory({
+                            id: result.ticketId,
+                            title: formData.title || `Relatório ${formData.reportType}`,
+                            client: formData.client,
+                            date: new Date().toLocaleString(),
+                            link: result.ticketLink
+                        });
+                        
+                    } else {
+                        throw new Error(result.error || 'Erro desconhecido ao criar ticket');
+                    }
+                } catch (error) {
+                    statusElement.textContent = `Erro: ${error.message}`;
+                    statusElement.className = "status status-error";
+                    reportOutput.textContent = `Erro ao criar ticket: ${error.message}`;
+                    console.error('Erro:', error);
+                }
+            });
+            
+            // Botão copiar
+            copyButton.addEventListener('click', () => {
+                navigator.clipboard.writeText(reportOutput.textContent)
+                    .then(() => {
+                        const originalText = copyButton.innerHTML;
+                        copyButton.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                        setTimeout(() => {
+                            copyButton.innerHTML = originalText;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Falha ao copiar:', err);
+                    });
+            });
+            
+            // Carregar clientes da API
+            async function loadClients() {
+                try {
+                    const response = await fetch('/api/clients');
+                    const data = await response.json();
+                    
+                    const select = document.getElementById('client');
+                    select.innerHTML = '<option value="">Selecione um cliente</option>';
+                    
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.id;
+                        option.textContent = client.name;
+                        select.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Erro ao carregar clientes:', error);
+                }
+            }
+            
+            // Gerenciar histórico
+            function loadHistory() {
+                const history = JSON.parse(localStorage.getItem('glpiTicketHistory') || '[]');
+                
+                if (history.length > 0) {
+                    historyElement.innerHTML = '';
+                    history.slice(0, 5).forEach(item => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+                        historyItem.innerHTML = `
+                            <span>${item.title} (${item.client})</span>
+                            <a href="${item.link}" target="_blank" style="color: var(--primary);">
+                                #${item.id}
+                            </a>
+                        `;
+                        historyElement.appendChild(historyItem);
+                    });
+                }
+            }
+            
+            function addToHistory(ticket) {
+                let history = JSON.parse(localStorage.getItem('glpiTicketHistory') || '[]');
+                history.unshift(ticket);
+                history = history.slice(0, 10); // Manter apenas os 10 mais recentes
+                localStorage.setItem('glpiTicketHistory', JSON.stringify(history));
+                loadHistory();
+            }
+        });
+    </script>
+</body>
+</html>
