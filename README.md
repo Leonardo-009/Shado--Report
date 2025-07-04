@@ -158,6 +158,7 @@ ABUSEIPDB_API_KEY=KEY
 VIRUSTOTAL_API_KEY=KEY
 
 4. **Iniciar o Backend Python**:
+pip install -r requirements.txt
    - Execute:
     .\venv\Scripts\activate
      uvicorn main:app --host 0.0.0.0 --port 8000

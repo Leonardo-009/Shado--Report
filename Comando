@@ -16,3 +16,9 @@ venv\Scripts\activate     # Windows
 #Instale LangChain e dependências
 pip install langchain langchain-community fastapi uvicorn
 
+pip install prometheus-client redis langchain-ollama
+
+deepseek-r1:8b
+mistral:latest
+llama3.1:8b
+llama3:latest

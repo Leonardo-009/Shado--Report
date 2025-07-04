@@ -106,7 +106,6 @@ async function gerarRelatorio() {
             return;
         }
 
-        const categoriesInput = document.getElementById('categories')?.value.split(',').filter(c => c.trim()) || ['autenticação'];
         const reportType = document.querySelector('input[name="report-type"]:checked')?.value || 'base';
         const alertName = document.getElementById('alertName')?.value.trim() || 'Não disponível';
         const ruleName = document.getElementById('ruleName')?.value.trim() || 'Não disponível';
@@ -115,9 +114,8 @@ async function gerarRelatorio() {
 
         const requestBody = {
             log: logInput,
-            iocs: [],
-            categories: categoriesInput,
-            reportType: reportType,
+            categories: ['autenticação'],
+            report_type: reportType,
             alertName: alertName,
             ruleName: ruleName
         };
@@ -173,15 +171,26 @@ function copyReport() {
         return;
     }
 
-    // Capturar o texto e garantir que as quebras de linha sejam preservadas
-    const textToCopy = reportOutput.textContent.trim();
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        showModal('Sucesso', 'Relatório copiado para a área de transferência!');
-        setTimeout(closeModal, 2000);
-    }).catch(err => {
+    const textarea = document.createElement('textarea');
+    textarea.value = reportOutput.textContent;
+    textarea.style.position = 'fixed';
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showModal('Sucesso', 'Relatório copiado para a área de transferência!');
+            setTimeout(closeModal, 2000);
+        } else {
+            throw new Error('Falha ao copiar');
+        }
+    } catch (err) {
         showModal('Erro', `Falha ao copiar o relatório: ${err.message}`);
         console.error('Erro ao copiar:', err);
-    });
+    } finally {
+        document.body.removeChild(textarea);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -191,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.error('Botão reportButton não encontrado no HTML.');
     }
+
     updateStatus('AGUARDANDO ENTRADA...', 'waiting');
     setupReportTypeOptions();
 });
