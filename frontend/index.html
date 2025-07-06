@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="./css/global.css">
     <link rel="icon" type="image/x-icon" href="/shadow.ico">
 </head>
+
 <body class="dark-theme">
     <nav class="navbar">
         <div class="navbar-brand">
@@ -24,66 +26,61 @@
             <div class="left-panel">
                 <div class="container">
                     <h1>Shadow Relatórios</h1>
-                    <div class="status status-waiting" id="status">
-                        <i class="fas fa-clock"></i> AGUARDANDO ENTRADA...
-                    </div>
 
                     <div class="section-title">
-                        <i class="fas fa-file-alt"></i>
                         <h2>Conteúdo do Log</h2>
                     </div>
+
+                    <div class="status status-waiting" id="status"> AGUARDANDO ENTRADA...
+                    </div>
+
                     <textarea id="log" placeholder="Cole o conteúdo do log aqui"></textarea>
 
                     <div class="section-title">
-                        <i class="fas fa-tags"></i>
                         <h2>Tipo de Relatório</h2>
                     </div>
                     <div id="reportTypeContainer" class="category-selection">
                         <div class="report-type-option" id="option-base">
                             <input type="radio" id="base-report" name="report-type" value="base" checked>
-                            <label for="base-report"><i class="fas fa-file-alt"></i> Relatório</label>
+                            <label for="base-report">Relatório</label>
                         </div>
                         <div class="report-type-option" id="option-refine">
                             <input type="radio" id="refine-rule" name="report-type" value="refine">
-                            <label for="refine-rule"><i class="fas fa-tools"></i> Refino de Regra</label>
+                            <label for="refine-rule"> Refino de Regra</label>
                         </div>
                         <div class="report-type-option" id="option-siem">
                             <input type="radio" id="siem-health" name="report-type" value="siem-health">
-                            <label for="siem-health"><i class="fas fa-heartbeat"></i> Saúde do SIEM</label>
+                            <label for="siem-health"> Saúde do SIEM</label>
                         </div>
                         <p id="reportTypeError" style="display: none;">Selecione um tipo de relatório.</p>
                     </div>
 
                     <div id="refineRuleFields" class="refine-rule-fields" style="display: none;">
                         <div class="section-title">
-                            <i class="fas fa-info-circle"></i>
                             <h2>Detalhes do Refino de Regra</h2>
                         </div>
                         <div class="form-group">
-                            <label for="alertName">Nome do Alerta</label>
-                            <input type="text" id="alertName" placeholder="Ex.: Alerta de Tentativa de Login">
-                        </div>
-                        <div class="form-group">
                             <label for="ruleName">Nome da Regra</label>
-                            <input type="text" id="ruleName" placeholder="Ex.: Regra_Login_Falha">
+                            <input type="text" id="ruleName" placeholder="Ex.: Regra_Login_Falha" required>
                         </div>
                     </div>
 
-                    <button class="generate-button button button-primary" id="reportButton">Gerar Relatório</button>
+                    <div class="button-group">
+                        <button class="generate-button button button-primary" id="reportButton">Gerar Relatório</button>
+                        <button class="clear-button button button-secondary" id="clearButton">Limpar</button>
+                    </div>
                 </div>
             </div>
 
             <div class="right-panel">
                 <div class="container">
                     <div class="section-title">
-                        <i class="fas fa-clipboard-list"></i>
                         <h2>Relatório Gerado</h2>
                     </div>
                     <div class="report-output-container">
                         <div id="reportOutput" class="report-output">Seu relatório será exibido aqui.</div>
                         <button class="copy-button button button-primary" onclick="copyReport()"
-                            title="Copiar Relatório">
-                            <i class="fas fa-copy"></i> Copiar
+                            title="Copiar Relatório"> Copiar
                         </button>
                     </div>
                 </div>
@@ -100,4 +97,5 @@
     </div>
     <script src="./js/script.js"></script>
 </body>
+
 </html>

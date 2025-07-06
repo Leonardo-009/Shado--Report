@@ -1,48 +1,102 @@
-/* Estilos base - Tema Preto, Cinza e Vermelho */
+/* ==================== */
+/* VARIABLES & DEFAULTS */
+/* ==================== */
 :root {
-  --primary-color: #e63946; /* Vermelho */
-  --secondary-color: #a4161a; /* Vermelho escuro */
-  --accent-color: #e5383b; /* Vermelho mais claro */
-  --background-dark: #0b090a; /* Preto quase puro */
-  --background-darker: #000000; /* Preto */
-  --background-light: #161a1d; /* Cinza muito escuro */
-  --background-lighter: #1f2937; /* Cinza escuro */
-  --text-primary: #f5f3f4; /* Branco suave */
-  --text-secondary: #d3d3d3; /* Cinza claro */
-  --error-color: #e5383b; /* Vermelho */
-  --warning-color: #f48c06; /* Laranja */
-  --success-color: #52b788; /* Verde */
-  --info-color: #1a759f; /* Azul */
-  --border-color: #333; /* Cinza escuro para bordas */
+  /* Color Palette */
+  --primary-color: #e63946;        /* Vibrant red */
+  --primary-dark: #a4161a;         /* Dark red */
+  --primary-light: #e5383b;        /* Light red */
+  
+  --background-dark: #0b090a;      /* Near-black */
+  --background-darker: #000000;    /* Pure black */
+  --background-light: #161a1d;     /* Very dark gray */
+  --background-lighter: #1f2937;   /* Dark gray */
+  
+  --text-primary: #f5f3f4;         /* Soft white */
+  --text-secondary: #d3d3d3;       /* Light gray */
+  
+  /* Status Colors */
+  --error-color: #e5383b;          /* Red */
+  --warning-color: #f48c06;        /* Orange */
+  --success-color: #52b788;        /* Green */
+  --info-color: #1a759f;           /* Blue */
+  
+  /* UI Elements */
+  --border-color: #333;            /* Dark gray for borders */
+  --border-radius: 4px;
+  --transition-time: 0.3s;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 5px 15px rgba(0, 0, 0, 0.5);
+  --shadow-primary: 0 0 8px rgba(230, 57, 70, 0.3);
+}
+
+/* ============ */
+/* BASE STYLES */
+/* ============ */
+* {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--background-dark);
   color: var(--text-primary);
+  line-height: 1.6;
 }
 
-/* Navbar - Estilo mais sombrio */
+::selection {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* ============ */
+/* TYPOGRAPHY */
+/* ============ */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-time);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============ */
+/* COMPONENTS */
+/* ============ */
+
+/* ----- NAVBAR ----- */
 .navbar {
   background-color: var(--background-darker);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
   border-bottom: 1px solid var(--primary-color);
+  position: relative;
+  z-index: 100;
 }
 
 .navbar-brand {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 700;
   color: var(--primary-color);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-shadow: 0 0 8px rgba(230, 57, 70, 0.3);
+  text-shadow: var(--shadow-primary);
 }
 
 .navbar-menu {
@@ -55,9 +109,8 @@ body {
 
 .nav-link {
   color: var(--text-secondary);
-  text-decoration: none;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: all var(--transition-time);
   padding: 0.5rem 0;
   position: relative;
 }
@@ -79,10 +132,10 @@ body {
   width: 100%;
   height: 2px;
   background-color: var(--primary-color);
-  box-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
+  box-shadow: var(--shadow-primary);
 }
 
-/* Layout principal */
+/* ----- LAYOUT ----- */
 .screen {
   display: none;
   min-height: calc(100vh - 70px);
@@ -110,41 +163,45 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
-/* Componentes - Estilo mais escuro */
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.5rem 0 1rem;
-  color: var(--primary-color);
+/* ----- FORM ELEMENTS ----- */
+.form-group {
+  margin-bottom: 1.5rem;
 }
 
-.section-title h2 {
-  margin: 0;
-  font-size: 1.25rem;
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 textarea,
-input[type="text"] {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background-color: var(--background-light);
   color: var(--text-primary);
   font-family: "Consolas", monospace;
   resize: vertical;
-  margin-bottom: 1rem;
-  transition: border 0.3s;
+  transition: all var(--transition-time);
 }
 
 textarea:focus,
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2);
@@ -154,54 +211,65 @@ textarea {
   min-height: 150px;
 }
 
+/* ----- BUTTONS ----- */
 .button {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-time);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
 
 .button-primary {
   background-color: var(--primary-color);
   color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .button-primary:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
-.generate-button {
-  margin-top: 1rem;
-  width: 100%;
-  justify-content: center;
-}
-
-.copy-button {
-  margin-top: 1rem;
+.button-secondary {
   background-color: var(--background-lighter);
   color: var(--text-primary);
 }
 
-.copy-button:hover {
+.button-secondary:hover {
   background-color: var(--background-light);
+  transform: translateY(-2px);
 }
 
-/* Status - Estilo mais impactante */
+.button-large {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.button-full {
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* ----- STATUS MESSAGES ----- */
 .status {
-  padding: 0.75rem;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
   margin: 1rem 0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-weight: 500;
   border-left: 4px solid;
 }
@@ -230,31 +298,17 @@ textarea {
   border-left-color: var(--error-color);
 }
 
-/* IOC List - Estilo mais escuro */
+/* ----- IOC LIST ----- */
 .ioc-input-container {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.ioc-input-group {
-  flex: 1;
-}
-
-.ioc-input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .ioc-list {
   margin-bottom: 1rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   max-height: 200px;
   overflow-y: auto;
   background-color: var(--background-light);
@@ -263,10 +317,10 @@ textarea {
 .ioc-item {
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--background-light);
-  transition: background-color 0.3s;
+  transition: background-color var(--transition-time);
 }
 
 .ioc-item:hover {
@@ -291,7 +345,7 @@ textarea {
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0.5rem;
-  transition: color 0.3s;
+  transition: color var(--transition-time);
 }
 
 .ioc-item button:hover {
@@ -302,14 +356,14 @@ textarea {
   font-size: 0.75rem;
   background-color: var(--background-darker);
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   margin-right: 0.5rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Report output - Estilo terminal moderno */
+/* ----- REPORT OUTPUT ----- */
 .report-output-container {
   position: relative;
 }
@@ -317,7 +371,7 @@ textarea {
 .report-output {
   background-color: var(--background-light);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   padding: 1.5rem;
   min-height: 300px;
   white-space: pre-wrap;
@@ -326,40 +380,38 @@ textarea {
   max-height: 70vh;
   line-height: 1.5;
   color: var(--text-primary);
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px
-    ),
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 20px 20px;
+  position: relative;
 }
 
-.report-output::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 30px;
-  background: linear-gradient(to bottom, var(--background-light), transparent);
-  pointer-events: none;
-}
-
+.report-output::before,
 .report-output::after {
   content: "";
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
   height: 30px;
-  background: linear-gradient(to top, var(--background-light), transparent);
   pointer-events: none;
+  z-index: 1;
 }
 
-/* Opções de Tipo de Relatório - Estilo moderno */
+.report-output::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--background-light), transparent);
+}
+
+.report-output::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--background-light), transparent);
+}
+
+/* ----- REPORT TYPE OPTIONS ----- */
 .category-selection {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -368,14 +420,15 @@ textarea {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: all var(--transition-time);
   border: 1px solid var(--border-color);
   background-color: var(--background-light);
+  cursor: pointer;
 }
 
 .report-type-option:hover {
   transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .report-type-option.selected {
@@ -386,8 +439,6 @@ textarea {
 .report-type-option input[type="radio"] {
   position: absolute;
   opacity: 0;
-  width: 0;
-  height: 0;
 }
 
 .report-type-option label {
@@ -404,74 +455,46 @@ textarea {
 .report-type-option i {
   font-size: 1.75rem;
   margin-bottom: 0.75rem;
-  color: var(--primary-color);
-}
-
-.report-type-option.selected i {
-  color: var(--primary-color);
 }
 
 .report-type-option label span {
   font-weight: 500;
-  color: var(--text-primary);
 }
 
-.report-type-option:hover label span {
-  color: var(--primary-color);
-}
-
-/* Estilo específico para cada tipo de relatório */
+/* Specific report type styles */
 #option-base {
   border-top: 3px solid var(--primary-color);
 }
-
-#option-base.selected {
-  background-color: rgba(230, 57, 70, 0.1);
-}
+#option-base i { color: var(--primary-color); }
+#option-base.selected { background-color: rgba(230, 57, 70, 0.1); }
 
 #option-refine {
   border-top: 3px solid var(--warning-color);
 }
-
-#option-refine i {
-  color: var(--warning-color);
-}
-
-#option-refine.selected {
-  background-color: rgba(244, 140, 6, 0.1);
-}
+#option-refine i { color: var(--warning-color); }
+#option-refine.selected { background-color: rgba(244, 140, 6, 0.1); }
 
 #option-siem {
   border-top: 3px solid var(--success-color);
 }
+#option-siem i { color: var(--success-color); }
+#option-siem.selected { background-color: rgba(82, 183, 136, 0.1); }
 
-#option-siem i {
-  color: var(--success-color);
-}
-
-#option-siem.selected {
-  background-color: rgba(82, 183, 136, 0.1);
-}
-
-/* Result tables - Estilo mais escuro */
-.results-container {
-  margin-top: 1rem;
-}
-
+/* ----- TABLES ----- */
 .results-table {
   overflow-x: auto;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1.5rem;
+  min-width: 600px;
 }
 
-th,
-td {
+th, td {
   padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
@@ -484,46 +507,20 @@ th {
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
 }
 
 tr:hover {
   background-color: rgba(255, 255, 255, 0.03);
 }
 
-.no-results {
-  padding: 1rem;
-  text-align: center;
-  color: var(--text-secondary);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--background-light);
-  border-radius: 4px;
-  margin: 1rem 0;
-}
-
-.no-results i {
-  font-size: 2rem;
-  color: var(--success-color);
-}
-
-.error-message {
-  color: var(--error-color);
-  padding: 1rem;
-  background-color: rgba(230, 57, 70, 0.1);
-  border-radius: 4px;
-  border-left: 4px solid var(--error-color);
-}
-
-/* Severity indicators - Estilo mais impactante */
+/* ----- SEVERITY INDICATORS ----- */
 .severity-indicator {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-left: auto;
   font-size: 0.9rem;
-  color: var(--text-secondary);
   background-color: var(--background-light);
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -537,60 +534,34 @@ tr:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+  border: 1px solid;
 }
 
 .severity-high {
   background-color: rgba(230, 57, 70, 0.2);
   color: var(--error-color);
-  border: 1px solid var(--error-color);
+  border-color: var(--error-color);
 }
 
 .severity-medium {
   background-color: rgba(244, 140, 6, 0.2);
   color: var(--warning-color);
-  border: 1px solid var(--warning-color);
+  border-color: var(--warning-color);
 }
 
 .severity-low {
   background-color: rgba(82, 183, 136, 0.2);
   color: var(--success-color);
-  border: 1px solid var(--success-color);
+  border-color: var(--success-color);
 }
 
 .severity-unknown {
   background-color: rgba(211, 211, 211, 0.2);
   color: var(--text-secondary);
-  border: 1px solid var(--text-secondary);
+  border-color: var(--text-secondary);
 }
 
-.ioc-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.ioc-link:hover {
-  text-decoration: underline;
-}
-
-/* Chart container - Estilo mais escuro */
-.chart-container {
-  padding: 1.5rem 2rem;
-  background-color: var(--background-darker);
-  margin-top: 1rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-}
-
-.severity-chart {
-  margin-top: 1rem;
-  height: 400px;
-}
-
-/* Modal - Estilo mais escuro */
+/* ----- MODAL ----- */
 .modal {
   display: none;
   position: fixed;
@@ -602,6 +573,7 @@ tr:hover {
   z-index: 1000;
   justify-content: center;
   align-items: center;
+  animation: fadeIn var(--transition-time) ease-out;
 }
 
 .modal.active {
@@ -614,10 +586,32 @@ tr:hover {
   border-radius: 8px;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-lg);
   position: relative;
   border: 1px solid var(--primary-color);
   animation: modalFadeIn 0.3s ease-out;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color var(--transition-time);
+  background: none;
+  border: none;
+  padding: 0.5rem;
+}
+
+.close-button:hover {
+  color: var(--primary-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes modalFadeIn {
@@ -631,21 +625,107 @@ tr:hover {
   }
 }
 
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text-secondary);
-  transition: color 0.3s;
+/* ----- SELECT COMPONENT ----- */
+.select-container {
+  position: relative;
+  width: 100%;
+  margin: 1rem 0;
 }
 
-.close-button:hover {
+.select-container::before {
+  content: "🔍";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  opacity: 0.7;
+  transition: all var(--transition-time);
+}
+
+select {
+  width: 100%;
+  padding: 1rem 1.5rem 1rem 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-time);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f5f3f4'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+select:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--primary-color);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2);
+}
+
+.select-container:hover::before {
+  opacity: 1;
   color: var(--primary-color);
 }
 
-/* Responsividade */
+/* ----- UTILITY CLASSES ----- */
+.no-results {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--background-light);
+  border-radius: var(--border-radius);
+}
+
+.no-results i {
+  font-size: 2rem;
+  color: var(--success-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  padding: 1rem;
+  background-color: rgba(230, 57, 70, 0.1);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--error-color);
+}
+
+/* ----- SCROLLBARS ----- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* ============ */
+/* RESPONSIVE */
+/* ============ */
 @media (max-width: 768px) {
   .screen-container {
     flex-direction: column;
@@ -665,254 +745,22 @@ tr:hover {
   .category-selection {
     grid-template-columns: 1fr;
   }
+  
+  .navbar {
+    padding: 1rem;
+  }
+  
+  .navbar-menu {
+    gap: 1rem;
+  }
 }
 
-/* Efeitos extras */
-::selection {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background-light);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
-}
-
-//teste
-
-/* Variáveis CSS para consistência */
-:root {
-  --primary-color: #e63946; /* Vermelho vibrante */
-  --border-color: #d1d5db; /* Cinza claro */
-  --background-light: #f9fafb; /* Cinza muito claro */
-  --text-primary: #1f2937; /* Cinza escuro */
-  --shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.1);
-  --shadow-selected: 0 0 0 2px rgba(230, 57, 70, 0.3);
-}
-
-/* Container do select para melhor controle */
-.select-container {
-  position: relative;
-  width: 280px;
-  margin: 1rem 0;
-}
-
-/* Estilo principal do select */
-#iocType {
-  /* Reset do estilo padrão */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  /* Estilo visual baseado no .report-type-option */
-  width: 100%;
-  padding: 1rem 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  background-color: var(--background-light);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  /* Seta personalizada */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f2937'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
-}
-
-/* Efeito hover - similar ao .report-type-option */
-#iocType:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--primary-color);
-}
-
-/* Efeito focus - similar ao .selected */
-#iocType:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: var(--shadow-selected);
-  transform: translateY(-1px);
-}
-
-/* Estilo para as opções */
-#iocType option {
-  padding: 0.75rem 1rem;
-  background-color: var(--background-light);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
-
-/* Estilo para a opção selecionada */
-#iocType option:checked {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-/* Efeito de ícone (opcional) */
-.select-container::before {
-  content: "🔍";
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  opacity: 0.7;
-  transition: all 0.3s ease;
-}
-
-#iocType {
-  padding-left: 2.5rem;
-}
-
-.select-container:hover::before {
-  opacity: 1;
-  color: var(--primary-color);
-}
-
-/* Versão dark mode (opcional) */
-.dark-mode .select-container #iocType {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: #f7fafc;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f7fafc'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-}
-
-.dark-mode .select-container #iocType option {
-  background-color: #2d3748;
-  color: #f7fafc;
-}
-
-.dark-mode .select-container #iocType option:checked {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.dark-mode .select-container::before {
-  color: #f7fafc;
-  opacity: 0.8;
-}
-
-/* Efeito de "card" quando aberto (para navegadores que suportam) */
-#iocType:focus-within {
-  box-shadow: var(--shadow-hover), var(--shadow-selected);
-}
-#iocType option[value="ip"] {
-    //background-image: url('ip-icon.svg');
-    background-repeat: no-repeat;
-    background-position: left 0.5rem center;
-    padding-left: 2rem;
-}
-
-#iocType option[value="url_hash"] {
-    //background-image: url('url-icon.svg');
-    background-repeat: no-repeat;
-    background-position: left 0.5rem center;
-    padding-left: 2rem;
-}
-.select-container {
-    perspective: 1000px;
-}
-
-#iocType:focus {
-    transform: translateY(-3px) rotateX(5deg);
-}
-@keyframes fadeInOptions {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Estilos existentes para form-group */
-.form-group {
-    margin-bottom: 15px;
-}
-.form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-.form-group input {
+@media (max-width: 480px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #1e1e1e;
-    color: #fff;
+  }
 }
-.form-group input::placeholder {
-    color: #888;
-}
-
-/* Estilos para a seção de opções de relatório */
-.category-selection {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.report-type-option {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #2c2c2c;
-    transition: border-color 0.3s ease;
-}
-
-.report-type-option.selected {
-    border: 2px solid #ff4444; /* Borda vermelha para o selecionado */
-}
-
-.report-type-option:hover {
-    background-color: #3c3c3c;
-}
-
-.report-type-option input[type="radio"] {
-    display: none; /* Ocultar o radio button padrão */
-}
-
-.report-type-option label {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    color: #fff;
-}
-
-.report-type-option i {
-    font-size: 1.2em;
-}
-
-/* Estilos para animação da seção refineRuleFields */
-.refine-rule-fields {
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: opacity 0.3s ease, max-height 0.3s ease;
-}
-
-.refine-rule-fields.visible {
-    opacity: 1;
-    max-height: 300px; /* Ajuste conforme necessário */
-}
-

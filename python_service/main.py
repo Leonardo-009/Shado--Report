@@ -42,7 +42,7 @@ async def startup_event():
         try:
             logger.info(f"Tentativa {tentativa} de conexão com Ollama ({OLLAMA_BASE_URL})...")
             llm = OllamaLLM(
-                model="mistral:latest",
+                model="llama3:latest",
                 base_url=OLLAMA_BASE_URL,
                 temperature=0.7,
                 num_ctx=4096,
@@ -98,21 +98,39 @@ def extract_log_fields(log: str, alertName: str, ruleName: str):
 # Template do relatório padrão
 report_prompt = PromptTemplate(
     input_variables=["saudacao", "log", "categories", "alertName", "ruleName"],
-    template="""Você é um analista de segurança cibernética. Analise o log e gere um relatório profissional no formato exato abaixo. Preencha apenas os campos disponíveis no log, usando "Não disponível" para os ausentes. Use linguagem objetiva e evite jargões excessivos.
+    template="""Você é um analista de segurança cibernética. Analise o log e gere um relatório profissional no formato exato abaixo. Preencha apenas os campos disponíveis no log. Se não disponível no log, não traga no relatório. Use linguagem objetiva e evite jargões excessivos.
+
+Instruções IMPORTANTES:
+1. Remova do Evidências todos os "não disponíveis".
+2. Para as recomendações, liste cada item com um bullet point (•) em uma linha separada, SEM números.
+3. Remova completamente qualquer seção que não tenha informações válidas.
+
+Caso de uso: Descreva o evento (ex.: falha de login, acesso não autorizado) com base no log.
+Análise: Forneça uma análise técnica detalhada, incluindo contexto (tipo de evento), impacto potencial (ex.: interrupção de serviço) e implicações.
+Objetivo do caso de uso: Especifique o objetivo da análise (ex.: detectar intrusões, identificar falhas de autenticação).
+Fonte de dados: Use "Windows Event Log" para logs XML ou "Syslog" para logs Syslog. Se não identificável, não traga o campo.
+Justificativa: Explique por que o evento justifica investigação, considerando gravidade, tipo de evento, número de tentativas (se aplicável) e impacto potencial (ex.: comprometimento de credenciais).
+Recomendações: Liste 3 ações práticas e acionáveis para mitigar o evento e prevenir recorrências, alinhadas com padrões como NIST ou CIS Controls.
+Resultado: Derive do campo 'message' (ex.: "Failed" para "Login failed") ou não traga o campo se não aplicável.
+Status: Não traga o campo, a menos que o log forneça um campo 'status' explícito.
+
+Modelo:
 
 Prezados(as), {saudacao}.
 
-Atividade suspeita detectada. Detalhes para validação:
+Atividade suspeita detectada, no ambiente. Detalhes para validação:
 
 Caso de uso: [Descreva o evento com base no log]
 
 🕵 Análise: [Forneça uma análise técnica do evento]
 
-📊 Fonte: [Identifique a fonte do log, ex.: Windows Event Log, Syslog, ou "Não disponível"]
+📊 Fonte: [Identifique a fonte do log, ex.: Windows Event Log, Syslog]
 
 🚨 Severidade: [Classifique a severidade, ex.: Baixa, Moderada, Alta]
 
 🧾 Evidências:
+[Inclua apenas campos com informações disponíveis]
+
 Data do Log: [Data e hora do evento]
 Fonte do Log: [Sistema ou componente que gerou o log]
 Usuário de Origem: [Usuário que iniciou a atividade, se aplicável]
@@ -129,21 +147,24 @@ Assunto: [Resumo do evento, ex.: tentativa de acesso a diretório restrito]
 Política: [Política de segurança violada, se aplicável]
 Nome da Ameaça: [Nome da ameaça, ex.: sondagem automatizada]
 Nome do Processo: [Processo envolvido, se aplicável]
-Nome da Regra MPE: [Nome da regra]
+Nome da Regra MPE: {ruleName}
 Mensagem do Fornecedor: [Mensagem ou código de erro do sistema]
 ID do Fornecedor: [Identificador único do evento, se disponível]
 Identificador de Navegador: [User-agent ou identificador, se aplicável]
 Ação: [Ação realizada, ex.: tentativa de acesso]
 Status: [Status da ação, ex.: sucesso, falha]
-Resultado: [Resultado final, ex.: bloqueado, permitido]
+
+Log: {log}
 
 🕵 Justificativa: [Explique o motivo da suspeita com base no log]
 
 📌 Recomendações:
-[Recomendação prática com base no log]
-[Recomendação adicional para mitigar o evento]
+• [Recomendação prática com base no log]
+• [Recomendação adicional para mitigar o evento]
+• [Recomendação final]
 
-*Log*: {log}
+Gere o relatório EXATAMENTE no formato especificado, preenchendo todos os campos com base no log fornecido.
+
 """
 )
 
@@ -152,66 +173,53 @@ refine_rule_prompt = PromptTemplate(
     input_variables=["saudacao", "log", "alertName", "ruleName"],
     template="""Você é um analista de segurança cibernética especializado em análise de monitoramento e refino de regras. Sua tarefa é analisar o log fornecido, identificar o evento ocorrido, determinar se o alerta gerado é um falso positivo e redigir uma solicitação clara, concisa e profissional para a equipe de sustentação, solicitando a validação de um possível refino da regra.
 
-O relatório deve seguir rigorosamente o modelo abaixo, preenchendo todos os campos com base no log. Se uma informação não estiver disponível, use "Não disponível". Use linguagem técnica, porém clara, adequada para a equipe de sustentação.
+Instruções:
+- Se não disponível no log, não traga no relatório.
+- Use linguagem técnica, porém clara, adequada para a equipe de sustentação.
+- Remova completamente qualquer seção que não tenha informações válidas.
 
-*Instruções*:
-*Cabeçalho*: Inclua o nome da regra no título. Use "N/A" se não disponível no log.
-*Saudação e Introdução*: Use uma saudação profissional (ex.: "Prezados, bom dia") e explique brevemente o contexto do alerta, destacando a possibilidade de falsos positivos.
-*Justificativa*: 
-*Exemplo de evento relevante*: Descreva o evento detectado (ex.: data, IP, ação, sistema afetado) com base no log.
-*Motivo do falso positivo*: Explique por que o alerta é considerado um falso positivo (ex.: atividade legítima, comportamento esperado de uma aplicação).
-*Solicitação*: Formule uma solicitação clara para a equipe de sustentação, sugerindo ações específicas (ex.: exclusão de IPs, ajuste de parâmetros, revisão de assinaturas).
-*Campos ausentes*: Use "Não disponível" para campos sem informação no log.
-*Formatação*: Siga exatamente o modelo abaixo, incluindo quebras de linha e emojis. Retorne o relatório em texto puro, sem formatação adicional (ex.: markdown, HTML).
-
-**Modelo do Relatório**:
+Modelo do Relatório:
 
 Prezados(as), {saudacao}. Identificamos um alerta gerado pela regra "{ruleName}" no SIEM, que pode estar gerando falsos positivos, impactando a eficiência do monitoramento. [Explique brevemente o que está acontecendo com base no evento do log].
 
-📝 Solicitação:  
+📝 Solicitação:
 [Solicitação clara para a equipe de sustentação, ex.: "Solicitamos a validação da regra para verificar se ajustes são necessários, como exclusão de IPs específicos, ajuste de parâmetros ou revisão de assinaturas."]
 
-🎯 Justificativa:  
+🎯 Justificativa:
 Exemplo de evento relevante: [Descrição do evento detectado, incluindo detalhes como data, IP, ação ou sistema afetado]
 
-🔎 Exemplo de Evento Relevante:  
+🔎 Exemplo de Evento Relevante:
 [Inserir exemplo do evento considerado válido ou suspeito, com os principais campos: IP, usuário, hostname, etc.]
 
-📌 Motivo do Falso Positivo:  
+📌 Motivo do Falso Positivo:
 [Explicação sobre por que o alerta gerado foi considerado um falso positivo. Ex: tarefa agendada legítima, scanner interno autorizado, etc.]
 
-Ação: [Ação realizada, ex.: tentativa de acesso]  
+Ação: [Ação realizada, ex.: tentativa de acesso]
 Nome da Regra MPE: {ruleName}
 
-📌 Considerações Finais:  
+📌 Considerações Finais:
 [Observações adicionais que devem ser levadas em conta no refino – Ex: ajustar horários de sensibilidade, whitelisting de host, correlação com outros eventos, etc.]
 
-📄 Nome da Regra: {ruleName}  
-📄 Nome do Alerta: {alertName}  
-📄 Amostra do ID: [ID do alerta gerado]  
-📄 Amostra do Log Recebido: {log}  
+📄 Nome da Regra: {ruleName}
+📄 Amostra do ID: [ID do alerta gerado]
+📄 Amostra do Log Recebido: {log}
 📂 Caso no SIEM: [Número do chamado criado no SIEM]
 
 Gere o relatório EXATAMENTE no formato especificado, preenchendo todos os campos com base no log fornecido.
+
 """
 )
 
 # Template do relatório de saúde do SIEM
 siem_health_prompt = PromptTemplate(
     input_variables=["saudacao", "log"],
-    template="""Você é um analista de segurança cibernética especializado em monitoramento e manutenção da saúde de sistemas SIEM. Sua tarefa é analisar o log fornecido, identificar possíveis problemas relacionados à saúde do SIEM (ex.: falhas na coleta de logs, atrasos, falsos positivos, regras mal configuradas, integrações inativas) e redigir um relatório claro, conciso e profissional para a equipe de manutenção do SIEM, solicitando validação ou ações corretivas. O relatório deve seguir rigorosamente o modelo abaixo, preenchendo todos os campos com base no log. Se uma informação não estiver disponível, use "Não disponível". Use linguagem técnica, mas acessível, adequada para a equipe de manutenção.
+    template="""Você é um analista de segurança cibernética especializado em monitoramento e manutenção da saúde de sistemas SIEM. Sua tarefa é analisar o log fornecido, identificar possíveis problemas relacionados à saúde do SIEM (ex.: falhas na coleta de logs, atrasos, falsos positivos, regras mal configuradas, integrações inativas) e redigir um relatório claro, conciso e profissional para a equipe de manutenção do SIEM.
 
-*Instruções*:
-*Caso de uso*: Descreva o problema identificado (ex.: falha na coleta de logs, atraso na ingestão) com base no log.
-*Justificativa*: Explique por que o evento indica um problema na saúde do SIEM, considerando impacto (ex.: lacunas no monitoramento) e gravidade.
-*Objetivo do caso de uso*: Especifique o objetivo da análise (ex.: garantir coleta em tempo real, corrigir regras mal configuradas).
-*Fonte de dados*: Use "Windows Event Log" para logs XML, "Syslog" para logs Syslog, ou "N/A" se não identificável.
-*Campos ausentes*: Use "Não disponível" para campos sem informação no log.
-*Resultado*: Derive do campo 'message' (ex.: "Failed" para "Log collection failed") ou use "N/A" se não aplicável.
-*Status*: Use "N/A" a menos que o log forneça um campo 'status' explícito.
-*Formatação*: Siga exatamente o modelo abaixo, incluindo quebras de linha e emojis. Retorne o relatório em texto puro, sem formatação adicional (ex.: markdown, HTML).
+Instruções:
+- Remova qualquer campo ou seção sem informação válida.
+- Use linguagem técnica acessível, voltada para operação e sustentação de sistemas SIEM.
 
-*Modelo do Relatório*:
+Modelo do Relatório:
 
 Prezados(as), {saudacao}.
 
@@ -223,11 +231,11 @@ Caso de uso: [Descrição do caso de uso, ex.: "Verificar a integridade da colet
 
 Objetivo do caso de uso: [Objetivo da análise, ex.: "Garantir que os logs sejam coletados em tempo real para evitar lacunas no monitoramento de segurança."]
 
-📊 Fonte de dados utilizada na análise: [Fonte dos dados, ex.: "Windows Event Log", "Syslog", "N/A"]
+📊 Fonte de dados utilizada na análise: [Fonte dos dados, ex.: "Windows Event Log", "Syslog"]
 
 🧾 Evidências:
 Data do Log: [Data e hora do evento]
-Fonte do Log: [Sistema ou componente que gerou o log, ex.: agente SIEM]
+Fonte do Log: [Sistema ou componente que gerou o log]
 Usuário de Origem: [Usuário associado, se aplicável]
 Usuário Afetado: [Usuário impactado, se aplicável]
 IP/Host de Origem: [IP ou host que gerou o evento]
@@ -245,14 +253,15 @@ Nome do Processo: [Processo envolvido, ex.: ingestão de logs]
 Nome da Regra MPE: [Regra que disparou o alerta, se aplicável]
 Mensagem do Fornecedor: [Mensagem ou código de erro do sistema]
 ID do Fornecedor: [Identificador único do evento, se disponível]
-Identificador de Navegador: [User-agent, se aplicável, ou "Não disponível"]
+Identificador de Navegador: [User-agent, se aplicável]
 Ação: [Ação relacionada, ex.: tentativa de coleta]
 Status: [Status da ação, ex.: falha]
 Resultado: [Resultado final, ex.: log não coletado]
 
-*Log fornecido*: {log}
+Log: {log}
 
 Gere o relatório EXATAMENTE no formato especificado, preenchendo todos os campos com base no log fornecido.
+
 """
 )
 

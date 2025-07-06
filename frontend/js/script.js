@@ -107,7 +107,6 @@ async function gerarRelatorio() {
         }
 
         const reportType = document.querySelector('input[name="report-type"]:checked')?.value || 'base';
-        const alertName = document.getElementById('alertName')?.value.trim() || 'Não disponível';
         const ruleName = document.getElementById('ruleName')?.value.trim() || 'Não disponível';
 
         updateStatus('Processando relatório...', 'processing');
@@ -116,7 +115,6 @@ async function gerarRelatorio() {
             log: logInput,
             categories: ['autenticação'],
             report_type: reportType,
-            alertName: alertName,
             ruleName: ruleName
         };
 
@@ -164,6 +162,69 @@ async function gerarRelatorio() {
     }
 }
 
+function formatReportContent(reportText, reportType, ruleName) {
+    // Primeiro, limpa o texto removendo marcadores desnecessários e campos vazios
+    let cleanedText = reportText
+        .replace(/=== Relatório Gerado ===/g, '')
+        .replace(/Tipo de Relatório:.*?\n/g, '')
+        .replace(/Conteúdo:\n/g, '')
+        .replace(/.*?: (N\/A|Não identificado|Não aplicável)\n/g, '') // Remove linhas com "Não disponível" ou "N/A"
+        .replace(/\n{3,}/g, '\n\n') // Remove múltiplas quebras de linha
+        .trim();
+
+    // Formata as recomendações para remover os números e colocar uma por linha
+    const recommendationsIndex = cleanedText.indexOf('📌 Recomendações:');
+    if (recommendationsIndex !== -1) {
+        const beforeRecommendations = cleanedText.substring(0, recommendationsIndex + '📌 Recomendações:'.length);
+        let afterRecommendations = cleanedText.substring(recommendationsIndex + '📌 Recomendações:'.length);
+        
+        // Remove números e pontos das recomendações
+        afterRecommendations = afterRecommendations
+            .replace(/\d\.\s*/g, '\n• ') // Substitui "1. " por "• "
+            .replace(/\n• /, '\n\n• ') // Adiciona quebra de linha antes da primeira recomendação
+            .replace(/\n• /g, '\n• '); // Garante formatação consistente
+
+        cleanedText = beforeRecommendations + afterRecommendations;
+    }
+
+    // Adiciona quebras de linha adequadas para melhor legibilidade
+    cleanedText = cleanedText
+        .replace(/(Prezados\(as\), Boa (tarde|dia|noite)\.)/, '$1\n\n')
+        .replace(/(Caso de uso:)/, '\n$1')
+        .replace(/(🕵 Análise:)/, '\n\n$1')
+        .replace(/(📊 Fonte:)/, '\n\n$1')
+        .replace(/(🚨 Severidade:)/, '\n\n$1')
+        .replace(/(🧾 Evidências:)/, '\n\n$1')
+        .replace(/(🕵 Justificativa:)/, '\n\n$1')
+        .replace(/(📌 Recomendações:)/, '\n\n$1')
+        .replace(/(Atenciosamente,)/, '\n\n$1');
+
+    // Formata as evidências com quebras de linha para cada item
+    const evidencesIndex = cleanedText.indexOf('Evidências:');
+    if (evidencesIndex !== -1) {
+        const beforeEvidences = cleanedText.substring(0, evidencesIndex + 'Evidências:'.length);
+        let afterEvidences = cleanedText.substring(evidencesIndex + 'Evidências:'.length);
+        
+        // Adiciona quebras de linha para cada item de evidência
+        const evidenceFields = [
+            'Data do Log:', 'Fonte do Log:', 'Usuário de Origem:', 'Usuário Afetado:',
+            'IP/Host de Origem:', 'IP/Host Afetado:', 'Localização (Origem/Impactado):',
+            'Tipo do Evento:', 'Grupo:', 'Objeto:', 'Nome do Objeto:', 'Tipo do Objeto:',
+            'Assunto:', 'Política:', 'Nome da Ameaça:', 'Nome do Processo:', 'Nome da Regra MPE:',
+            'Mensagem do Fornecedor:', 'ID do Fornecedor:', 'Identificador de Navegador:',
+            'Ação:', 'Status:', 'Resultado:'
+        ];
+        
+        evidenceFields.forEach(field => {
+            afterEvidences = afterEvidences.replace(new RegExp(`(${field})`), '\n$1');
+        });
+
+        cleanedText = beforeEvidences + afterEvidences;
+    }
+
+    return cleanedText;
+}
+
 function copyReport() {
     const reportOutput = document.getElementById('reportOutput');
     if (!reportOutput || reportOutput.textContent === 'Seu relatório será exibido aqui.') {
@@ -171,12 +232,27 @@ function copyReport() {
         return;
     }
 
+    const reportType = document.querySelector('input[name="report-type"]:checked')?.value || 'base';
+    const ruleName = document.getElementById('ruleName')?.value.trim() || 'Não disponível';
+
+    // Obtém o texto formatado corretamente
+    let formattedReport = formatReportContent(reportOutput.textContent, reportType, ruleName);
+    
+    // Limpeza final para garantir que não haja linhas vazias ou campos indesejados
+    formattedReport = formattedReport
+        .split('\n')
+        .filter(line => !line.match(/^.*?: $/)) // Remove linhas com apenas rótulo e nada mais
+        .join('\n')
+        .replace(/\n{3,}/g, '\n\n'); // Remove múltiplas quebras de linha
+
+    // Cria um elemento textarea temporário para copiar o texto formatado
     const textarea = document.createElement('textarea');
-    textarea.value = reportOutput.textContent;
+    textarea.value = formattedReport;
     textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
     document.body.appendChild(textarea);
     textarea.select();
-    
+
     try {
         const successful = document.execCommand('copy');
         if (successful) {
@@ -193,12 +269,84 @@ function copyReport() {
     }
 }
 
+function copyReport() {
+    const reportOutput = document.getElementById('reportOutput');
+    if (!reportOutput || reportOutput.textContent === 'Seu relatório será exibido aqui.') {
+        showModal('Aviso', 'Nenhum relatório para copiar.');
+        return;
+    }
+
+    const reportType = document.querySelector('input[name="report-type"]:checked')?.value || 'base';
+    const ruleName = document.getElementById('ruleName')?.value.trim() || 'Não disponível';
+
+    const formattedReport = formatReportContent(reportOutput.textContent, reportType, ruleName);
+
+    const textarea = document.createElement('textarea');
+    textarea.value = formattedReport;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showModal('Sucesso', 'Relatório copiado para a área de transferência!');
+            setTimeout(closeModal, 2000);
+        } else {
+            throw new Error('Falha ao copiar');
+        }
+    } catch (err) {
+        showModal('Erro', `Falha ao copiar o relatório: ${err.message}`);
+        console.error('Erro ao copiar:', err);
+    } finally {
+        document.body.removeChild(textarea);
+    }
+}
+
+function clearForm() {
+    const logInput = document.getElementById('log');
+    if (logInput) {
+        logInput.value = '';
+    }
+
+    const ruleName = document.getElementById('ruleName');
+    if (ruleName) {
+        ruleName.value = '';
+    }
+
+    const reportOutput = document.getElementById('reportOutput');
+    if (reportOutput) {
+        reportOutput.textContent = 'Seu relatório será exibido aqui.';
+    }
+
+    const baseReport = document.getElementById('base-report');
+    if (baseReport) {
+        baseReport.checked = true;
+        const baseOption = document.getElementById('option-base');
+        if (baseOption) {
+            selectReportOption(baseOption);
+        }
+    }
+
+    updateStatus('AGUARDANDO ENTRADA...', 'waiting');
+    showModal('Sucesso', 'Formulário limpo com sucesso!');
+    setTimeout(closeModal, 2000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const reportButton = document.getElementById('reportButton');
     if (reportButton) {
         reportButton.addEventListener('click', gerarRelatorio);
     } else {
         console.error('Botão reportButton não encontrado no HTML.');
+    }
+
+    const clearButton = document.getElementById('clearButton');
+    if (clearButton) {
+        clearButton.addEventListener('click', clearForm);
+    } else {
+        console.error('Botão clearButton não encontrado no HTML.');
     }
 
     updateStatus('AGUARDANDO ENTRADA...', 'waiting');
