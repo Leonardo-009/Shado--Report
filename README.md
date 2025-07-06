@@ -1,4 +1,4 @@
-# Shado-Report - Análise de Logs de Segurança com IA Local
+# Shado-IA - Análise de Logs de Segurança com IA Local
 
 O **Shado-Report** é uma aplicação web que analisa logs de segurança (ex.: LogRhythm, QRadar, Trend Micro ou texto genérico) usando um modelo de IA local (Ollama) e gera relatórios estruturados. O sistema inclui um frontend (HTML, JavaScript), um backend Node.js (`server.js`) e um backend Python (`main.py`). Este guia ensina como instalar e rodar o projeto passo a passo.
 
